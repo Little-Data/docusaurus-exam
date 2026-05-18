@@ -144,7 +144,7 @@ const config = {
           src:'https://count.getloli.com/@little_ceyan?name=little_ceyan&theme=original-new&padding=7&offset=0&align=top&scale=1&pixelated=1&darkmode=auto',
           },
         style: 'light',
-        copyright: `logo icon by <a href="https://github.com/microsoft/fluentui-system-icons">Microsoft</a><br/>所有文档及其它资源收集于互联网，无法准确知晓作者。如有问题可到Github提出issue`,
+        copyright: `Built with Docusaurus. logo icon by <a href="https://github.com/microsoft/fluentui-system-icons">Microsoft</a><br/>所有文档及其它资源收集于互联网，无法准确知晓作者。如有问题可到Github提出issue`,
       },
       prism: {
         theme: prismThemes.github,
