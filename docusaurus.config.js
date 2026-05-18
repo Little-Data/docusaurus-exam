@@ -111,7 +111,7 @@ const config = {
             position: 'left'
           },
           {
-            to:'/rss.xml',
+            href:'/rss.xml',
             label: 'Rss订阅',
             position: 'left',
           },
