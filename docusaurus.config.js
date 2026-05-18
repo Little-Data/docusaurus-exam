@@ -111,7 +111,7 @@ const config = {
             position: 'left'
           },
           {
-            href:'/rss.xml',
+            href:'https://exam.little-data.top/rss.xml',
             label: 'Rss订阅',
             position: 'left',
           },
