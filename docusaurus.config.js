@@ -88,6 +88,22 @@ const config = {
         textColor: '#091E42',
         isCloseable: true,
       },
+      algolia: {
+        appId: 'QRAVS459AQ',
+        apiKey: '833898bcf0a6a7d7c29b3417a228cc31',
+        indexName: '测验库爬虫',
+        contextualSearch: true,
+        externalUrlRegex: 'external\\.com|domain\\.com',
+        replaceSearchResultPathname: {
+          from: '/docs/', // or as RegExp: /\/docs\//
+          to: '/',
+        },
+        searchPagePath: 'search',
+        maxResultsPerGroup: 7,
+        recentSearchesLimit: 7,
+        recentSearchesWithFavoritesLimit: 5,
+        keyboardShortcuts: { 'Ctrl/Cmd+K': false, '/': false },
+      },
       navbar: {
         title: '测验库',
         logo: {
