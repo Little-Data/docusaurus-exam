@@ -1,0 +1,40 @@
+---
+unlisted: true
+---
+
+## 单选
+
+<Workpaper>
+<Workpapersettings showans="true" />
+  <Workitem xuanze>
+    <Wenben> </Wenben>
+    <Xuanxiang> </Xuanxiang>
+    <Xuanxiang> </Xuanxiang>
+    <Xuanxiang> </Xuanxiang>
+    <Xuanxiang> </Xuanxiang>
+    <Jiexi> </Jiexi>
+  </Workitem>
+</Workpaper>
+
+## 填空
+
+<Workpaper>
+<Workpapersettings showans="true" />
+  <Workitem tiankong>
+    <Wenben> </Wenben>
+    <Ansinput />
+    <Jiexi> </Jiexi>
+  </Workitem>
+</Workpaper>
+
+## 判断
+
+<Workpaper>
+<Workpapersettings showans="true" />
+  <Workitem xuanze>
+    <Wenben> </Wenben>
+    <Xuanxiang>对</Xuanxiang>
+    <Xuanxiang>错</Xuanxiang>
+    <Jiexi> </Jiexi>
+  </Workitem>
+</Workpaper>

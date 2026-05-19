@@ -132,7 +132,7 @@ const config = {
             position: 'left',
           },
           {
-            href: 'https://github.com/little-Data',
+            href: 'https://github.com/Little-Data/docusaurus-exam',
             label: 'GitHub',
             position: 'right',
           },
@@ -144,7 +144,7 @@ const config = {
           src:'https://count.getloli.com/@little_ceyan?name=little_ceyan&theme=original-new&padding=7&offset=0&align=top&scale=1&pixelated=1&darkmode=auto',
           },
         style: 'light',
-        copyright: `Built with Docusaurus. logo icon by <a href="https://github.com/microsoft/fluentui-system-icons">Microsoft</a><br/>所有文档及其它资源收集于互联网，无法准确知晓作者。如有问题可到Github提出issue`,
+        copyright: `解析及答案不一定100%准确！仅提供思路<br/>所有文档及其它资源收集于互联网，无法准确知晓作者。如有问题可到Github提出issue<br />Built with Docusaurus. logo icon by <a href="https://github.com/microsoft/fluentui-system-icons">Microsoft</a>`,
       },
       prism: {
         theme: prismThemes.github,
