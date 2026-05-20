@@ -1,7 +1,7 @@
 ---
 slug: Vue.js_Review_Question_Bank
 title: Vue.js复习题库
-tags: [Vue.js, node.js]
+tags: [Vue.js, node.js, 黑马程序员]
 description: Vue.js复习题库
 hide_table_of_contents: false
 date: 2025-12-11T00:00
@@ -9,6 +9,10 @@ unlisted: false
 ---
 
 Vue.js复习题库。
+
+相关图书：《Vue.js前端开发实战（第2版）》-中国工信出版集团，人民邮电出版社-黑马程序员-ISBN9787115618153
+
+印次：2023年8月
 
 {/* truncate */}
 
