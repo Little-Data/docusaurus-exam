@@ -75,22 +75,22 @@ unlisted: false
   <Workitem tiankong>
     <Wenben>7. 对于判定语句 if (a\>1 and c\<1)，测试时要保证 a\>1、c\<1 两个条件取真值、假值至少一次，同时，判定语句 if (a\>1 and c\<1) 取真值、假值也至少一次，这使用了（1）覆盖方法。</Wenben>
     <Ansinput />
-    <Jiexi>（1）判定-条件覆盖</Jiexi>
+    <Jiexi>判定-条件覆盖</Jiexi>
   </Workitem>
   <Workitem tiankong>
     <Wenben>8. （1）是指判定语句中的每个条件都要取真值、假值各一次。</Wenben>
     <Ansinput />
-    <Jiexi>（1）条件覆盖</Jiexi>
+    <Jiexi>条件覆盖</Jiexi>
   </Workitem>
   <Workitem tiankong>
     <Wenben>9. （1）的作用是使真、假分支均被执行。</Wenben>
     <Ansinput />
-    <Jiexi>（1）判定覆盖</Jiexi>
+    <Jiexi>判定覆盖</Jiexi>
   </Workitem>
   <Workitem tiankong>
     <Wenben>10. （1）要求判定语句中所有条件取值的可能组合至少出现一次。</Wenben>
     <Ansinput />
-    <Jiexi>（1）条件组合覆盖</Jiexi>
+    <Jiexi>条件组合覆盖</Jiexi>
   </Workitem>
 </Workpaper>
 

@@ -20,6 +20,7 @@ export default function Workpapersettings({
           type="checkbox"
           checked={showAnsDirectly || false}
           onChange={onAnsChange}
+          autoComplete="off"
         />
         直接显示答案
       </label>
@@ -29,6 +30,7 @@ export default function Workpapersettings({
           checked={showJiexiDirectly || false}
           onChange={onJiexiChange}
           disabled={showAnsDirectly}
+          autoComplete="off"
         />
         直接显示解析
       </label>

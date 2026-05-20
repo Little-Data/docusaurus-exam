@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import Workpapersettings from '@theme/Workpapersettings';
 import { QuizContext } from '../QuizContext';
 import styles from './styles.module.css';
@@ -19,6 +19,13 @@ export default function Workpaper({ children }) {
   const [showAnsDirectly, setShowAnsDirectly] = useState(initialShowAns);
   const [showJiexiDirectlyUser, setShowJiexiDirectlyUser] = useState(initialShowJiexi);
   const [forceExpandAllState, setForceExpandAllState] = useState(null);
+
+  // 强制同步初始状态，确保刷新后恢复到 Workpapersettings 所控制的状态
+  useEffect(() => {
+    setShowAnsDirectly(initialShowAns);
+    setShowJiexiDirectlyUser(initialShowJiexi);
+    setForceExpandAllState(null);
+  }, [initialShowAns, initialShowJiexi]);
 
   const showJiexiDirectly = showAnsDirectly || showJiexiDirectlyUser;
 
