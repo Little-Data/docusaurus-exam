@@ -284,7 +284,7 @@ function fillReducer(state, action) {
   }
 }
 
-function FillQuestion({ question, hasAnsinput, hasLatex, jiexiContent, jiexiShouqi }) {
+function FillQuestion({ question, hasAnsinput, hasKaTeX, jiexiContent, jiexiShouqi }) {
   const { showAnsDirectly, showJiexiDirectly, forceExpandAllState } = useContext(QuizContext);
 
   const [state, dispatch] = useReducer(fillReducer, {
@@ -415,7 +415,7 @@ function FillQuestion({ question, hasAnsinput, hasLatex, jiexiContent, jiexiShou
   }, []);
 
   const openOrRefreshPreview = useCallback(() => {
-    if (!hasLatex || !hasAnsinput) return;
+    if (!hasKaTeX || !hasAnsinput) return;
     const currentContent = state.inputValue.trim();
     if (!currentContent) return;
     if (!previewOpen) {
@@ -430,7 +430,7 @@ function FillQuestion({ question, hasAnsinput, hasLatex, jiexiContent, jiexiShou
         renderMixedContent(currentContent, previewContainerRef.current, setPreviewError);
       }
     }
-  }, [previewOpen, hasLatex, hasAnsinput, state.inputValue, renderMixedContent]);
+  }, [previewOpen, hasKaTeX, hasAnsinput, state.inputValue, renderMixedContent]);
 
   const closePreview = useCallback(() => {
     setPreviewOpen(false);
@@ -449,7 +449,7 @@ function FillQuestion({ question, hasAnsinput, hasLatex, jiexiContent, jiexiShou
 
   const locked = showAnsDirectly || state.userLocked;
   const showJiexi = showAnsDirectly || showJiexiDirectly || state.userLocked;
-  const isLatexMode = hasLatex && hasAnsinput;
+  const isKaTeXMode = hasKaTeX && hasAnsinput;
   const hasContent = state.inputValue.trim().length > 0;
   const initialCollapsed = useMemo(() => {
     if (jiexiShouqi !== undefined) return jiexiShouqi;
@@ -498,11 +498,11 @@ function FillQuestion({ question, hasAnsinput, hasLatex, jiexiContent, jiexiShou
   const setAnswerRef = useCallback((node) => {
     answerContainerRef.current = node;
     if (node && pendingRenderRef.current && state.userLocked && submittedAnswerRaw) {
-      if (isLatexMode && submittedDisplayMode === 'rendered') {
-        // LaTeX 模式且需要渲染公式
+      if (isKaTeXMode && submittedDisplayMode === 'rendered') {
+        // KaTeX 模式且需要渲染公式
         renderMixedContent(submittedAnswerRaw, node, () => {});
       } else {
-        // 非 LaTeX 模式，或 LaTeX 模式但选择了“显示原文”：纯文本显示
+        // 非 KaTeX 模式，或 KaTeX 模式但选择了“显示原文”：纯文本显示
         node.innerHTML = '';
         const pre = document.createElement('pre');
         pre.style.whiteSpace = 'pre-wrap';
@@ -516,7 +516,7 @@ function FillQuestion({ question, hasAnsinput, hasLatex, jiexiContent, jiexiShou
       }
       pendingRenderRef.current = false;
     }
-  }, [state.userLocked, submittedAnswerRaw, submittedDisplayMode, isLatexMode, renderMixedContent]);
+  }, [state.userLocked, submittedAnswerRaw, submittedDisplayMode, isKaTeXMode, renderMixedContent]);
 
   useLayoutEffect(() => {
     if (showAnsDirectly) {
@@ -535,13 +535,13 @@ function FillQuestion({ question, hasAnsinput, hasLatex, jiexiContent, jiexiShou
             <textarea
               className={styles.textarea}
               rows={4}
-              placeholder={isLatexMode ?
-                "请输入你的答案... 支持LaTeX数学公式代码" :
+              placeholder={isKaTeXMode ?
+                "请输入你的答案... 支持KaTeX数学公式代码" :
                 "请输入你的答案..."}
               value={state.inputValue}
               onChange={handleInputChange}
             />
-            {isLatexMode && previewOpen && (
+            {isKaTeXMode && previewOpen && (
               <div className={styles.previewArea}>
                 <div className={styles.previewHeader}>
                   <span className={styles.previewTitle}>渲染效果</span>
@@ -571,7 +571,7 @@ function FillQuestion({ question, hasAnsinput, hasLatex, jiexiContent, jiexiShou
         <div className={styles.submitRow}>
           {state.redoCount > 0 && <span className={styles.redoCount}>重做次数: {state.redoCount}</span>}
           <div className={styles.buttonGroup}>
-            {isLatexMode && (
+            {isKaTeXMode && (
               <button
                 className={`${previewOpen ? styles.refreshBtn : styles.previewBtn} ${!hasContent ? styles.hiddenBtn : ''}`}
                 onClick={openOrRefreshPreview}
@@ -608,7 +608,7 @@ function FillQuestion({ question, hasAnsinput, hasLatex, jiexiContent, jiexiShou
         <div className={styles.submittedAnswerContainer}>
           <div className={styles.submittedAnswerHeader}>
             <span className={styles.submittedAnswerTitle}>你的答案</span>
-            {isLatexMode && (
+            {isKaTeXMode && (
               <button className={styles.toggleRenderBtn} onClick={toggleDisplayMode}>
                 {submittedDisplayMode === 'rendered' ? '显示原文' : '显示渲染'}
               </button>
@@ -632,7 +632,7 @@ function FillQuestion({ question, hasAnsinput, hasLatex, jiexiContent, jiexiShou
 }
 
 export default function Workitem({ children, xuanze, tiankong, ...rest }) {
-  const { wenbenContent, options, jiexiContent, jiexiShouqi, hasAnsinput, hasLatex } = useMemo(() => {
+  const { wenbenContent, options, jiexiContent, jiexiShouqi, hasAnsinput, hasKaTeX } = useMemo(() => {
     const items = React.Children.toArray(children);
     const wenben = items.find(child => child.type === Wenben);
     const opts = items.filter(child => child.type === Xuanxiang);
@@ -649,7 +649,7 @@ export default function Workitem({ children, xuanze, tiankong, ...rest }) {
       jiexiContent: jiexi ? jiexi.props.children : null,
       jiexiShouqi: jiexi ? jiexi.props.shouqi === 'true' || jiexi.props.shouqi === true : undefined,
       hasAnsinput: !!ansinput,
-      hasLatex: ansinput?.props?.latex === true,
+      hasKaTeX: ansinput?.props?.katex === true,
     };
   }, [children]);
 
@@ -672,7 +672,7 @@ export default function Workitem({ children, xuanze, tiankong, ...rest }) {
       <FillQuestion
         question={wenbenContent}
         hasAnsinput={hasAnsinput}
-        hasLatex={hasLatex}
+        hasKaTeX={hasKaTeX}
         jiexiContent={jiexiContent}
         jiexiShouqi={jiexiShouqi}
       />
