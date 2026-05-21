@@ -77,6 +77,13 @@ const config = {
     ],
   ],
 
+  scripts: [
+    {
+      src: '/katex/katex.min.js',
+      defer: true,  // 确保在 DOM 加载后执行，不阻塞页面渲染
+    },
+  ],
+
   stylesheets: [
     {
       href: '/katex/katex.min.css',

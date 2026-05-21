@@ -16,6 +16,18 @@ unlisted: true
   </Workitem>
 </Workpaper>
 
+## 判断
+
+<Workpaper>
+<Workpapersettings showans="true" />
+  <Workitem xuanze>
+    <Wenben> </Wenben>
+    <Xuanxiang>对</Xuanxiang>
+    <Xuanxiang>错</Xuanxiang>
+    <Jiexi> </Jiexi>
+  </Workitem>
+</Workpaper>
+
 ## 填空
 
 <Workpaper>
@@ -27,14 +39,13 @@ unlisted: true
   </Workitem>
 </Workpaper>
 
-## 判断
+## 计算
 
 <Workpaper>
 <Workpapersettings showans="true" />
-  <Workitem xuanze>
+  <Workitem tiankong>
     <Wenben> </Wenben>
-    <Xuanxiang>对</Xuanxiang>
-    <Xuanxiang>错</Xuanxiang>
+    <Ansinput latex />
     <Jiexi> </Jiexi>
   </Workitem>
 </Workpaper>
