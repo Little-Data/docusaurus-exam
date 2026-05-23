@@ -44,7 +44,7 @@ const config = {
   },
 
   plugins: [
-    'docusaurus-plugin-zooming',
+    './plugins/image-viewer',
     './plugins/quiz-plugin',
   ],
 
@@ -98,6 +98,15 @@ const config = {
       image: 'img/favicon.ico',
       colorMode: {
         respectPrefersColorScheme: true,
+      },
+      imageViewer: {
+        scale: 1.8,
+        enableWheelZoom: true,
+        containerSelector: 'article',
+        excludeSelector: '.avatar',
+        minScale: 0.5,
+        maxScale: Infinity,
+        wheelStep: 0.25,
       },
       announcementBar: {
         id: 'follow_me',
