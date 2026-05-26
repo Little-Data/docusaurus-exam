@@ -83,11 +83,11 @@ unlisted: false
     <Wenben>6. 导线中移动电荷随时间变化的函数是 $q(t)=(10t^2+5)C$，求 $t=0s$ 及 $t=2s$ 时刻的电流大小是多少？</Wenben>
     <Ansinput katex />
     <Jiexi>
-      根据电流定义式的微分表达式 $i(t)=\frac{d}{dt}q(t)$，对电荷表达进行微分运算，
+      根据电流定义式的微分表达式 $i(t)=\frac{\mathrm{d}}{\mathrm{d}t}q(t)$，对电荷表达进行微分运算，
 
       对 $q(t)$ 求导得：
 
-      $i(t)=\frac{d(10t^2+5)}{dt}=20\hspace{2px}t$
+      $i(t)=\frac{\mathrm{d}(10t^2+5)}{\mathrm{d}t}=20\hspace{2px}t$
 
       在 $t=0s$ 时电流大小为：$i(0)=20 \times 0=0\hspace{2px}A$
 

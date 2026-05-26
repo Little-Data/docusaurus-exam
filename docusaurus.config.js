@@ -166,6 +166,21 @@ const config = {
         ],
       },
       footer: {
+        links: [
+          {
+            title: '实用工具',
+            items: [
+              {
+                label: '在线绘图',
+                href: 'https://dwaz.top/huitu',
+              },
+              {
+                label: 'LaTeX 公式可视化编辑',
+                href: 'https://dwaz.top/gs',
+              },
+            ],
+          },
+        ],
         logo:{
           alt:'访问计数',
           src:'https://count.getloli.com/@little_ceyan?name=little_ceyan&theme=original-new&padding=7&offset=0&align=top&scale=1&pixelated=1&darkmode=auto',

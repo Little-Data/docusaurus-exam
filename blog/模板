@@ -45,7 +45,7 @@ unlisted: true
 <Workpapersettings showans="true" />
   <Workitem tiankong>
     <Wenben> </Wenben>
-    <Ansinput latex />
+    <Ansinput katex />
     <Jiexi> </Jiexi>
   </Workitem>
 </Workpaper>
