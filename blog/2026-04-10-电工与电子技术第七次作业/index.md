@@ -43,7 +43,7 @@ unlisted: false
 <Workpapersettings />
   <Workitem tiankong>
     <Wenben>
-        2. 如图，已知 $I_1=0.01A$，$I_2=0.3A$，$I_5=9.61A$。试求电流 $I_3$、$I_4$ 和 $I_6$
+        2. 如图，已知 $I_1=0.01A$，$I_2=0.3A$，$I_5=9.61A$。试求电流 $I_3$、$I_4$ 和 $I_6$（课本P28，1-6）
 
         ![01](01.svg)
     </Wenben>
