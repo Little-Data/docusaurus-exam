@@ -132,6 +132,7 @@ const config = {
         keyboardShortcuts: { 'Ctrl/Cmd+K': false, '/': false },
       },
       navbar: {
+        hideOnScroll: true,
         title: '测验库',
         logo: {
           alt: 'My Site Logo',
