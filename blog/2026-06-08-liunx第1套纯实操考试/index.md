@@ -1,8 +1,8 @@
 ---
-slug: Linux_Practical_Exam_01
-title: Liunx 第1套纯实操考试
+slug: Linux_Practice_Exercises_01
+title: Liunx 第1套纯实操练习
 tags: [Linux网络操作系统]
-description: Liunx 第1套纯实操考试
+description: Liunx 第1套纯实操练习
 hide_table_of_contents: false
 date: 2026-06-08T08:00
 last_update:
@@ -10,7 +10,7 @@ last_update:
 unlisted: false
 ---
 
-Liunx 第1套纯实操考试。
+Liunx 第1套纯实操练习。
 
 相关图书：《Linux网络操作系统项目教程》-中国工信出版集团、人民邮电出版社-杨云-ISBN9787115673602
 
