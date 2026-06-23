@@ -22,7 +22,7 @@ Liunx 第1套纯实操练习。
 以下执行命令之后的输出仅供参考，不一定完全与示例内容一致！
 :::
 
-<h3>上机实操在 /home 目录下创建 test 文件夹的 Linux 命令是</h3>
+## 上机实操在 /home 目录下创建 test 文件夹的 Linux 命令是
 
 ```shell
 // highlight-next-line
@@ -31,7 +31,7 @@ Liunx 第1套纯实操练习。
 a123  test
 ```
 
-<h3>上机实操创建空白文件 hello.txt 的命令是</h3>
+## 上机实操创建空白文件 hello.txt 的命令是
 
 ```shell
 // highlight-next-line
@@ -40,7 +40,7 @@ a123  test
 公共  模板  视频  图片  文档  下载  音乐  桌面  hello.txt
 ```
 
-<h3>上机实操删除指定文件的命令是</h3>
+## 上机实操删除指定文件的命令是
 
 ```shell
 // highlight-next-line
@@ -49,13 +49,13 @@ a123  test
 公共  模板  视频  图片  文档  下载  音乐  桌面
 ```
 
-<h3>上机实操查看 /etc/profile 文件全部内容的命令是</h3>
+## 上机实操查看 /etc/profile 文件全部内容的命令是
 
 ```shell
 [a123@localhost ~]$ cat /etc/profile
 ```
 
-<h3>上机实操人性化查看系统整体磁盘空间的命令是</h3>
+## 上机实操人性化查看系统整体磁盘空间的命令是
 
 ```shell
 // highlight-next-line
@@ -70,7 +70,7 @@ tmpfs                166M   52K  166M    1% /run/user/42
 tmpfs                166M  104K  165M    1% /run/user/1000
 ```
 
-<h3>上机实操查看系统所有运行进程的命令是</h3>
+## 上机实操查看系统所有运行进程的命令是
 
 ```shell
 // highlight-next-line
@@ -85,7 +85,7 @@ root           6       2  0 21:28 ?        00:00:00 [kworker/R-slub_flushwq]
 root           7       2  0 21:28 ?        00:00:00 [kworker/R-netns]
 ```
 
-<h3>上机实操永久关闭防火墙并禁止开机自启的完整命令组中，关闭防火墙的命令是</h3>
+## 上机实操永久关闭防火墙并禁止开机自启的完整命令组中，关闭防火墙的命令是
 
 ```shell
 // highlight-start
@@ -112,7 +112,7 @@ Removed "/etc/systemd/system/dbus-org.fedoraproject.FirewallD1.service".
 6月 12 22:07:39 localhost.localdomain systemd[1]: Stopped firewalld - dynamic firewall daemon.
 ```
 
-<h3>上机实操测试外网连通性、发送 3 次数据包的 ping 命令是</h3>
+## 上机实操测试外网连通性、发送 3 次数据包的 ping 命令是
 
 ```shell
 // highlight-next-line
@@ -127,7 +127,7 @@ PING www.a.shifen.com (157.148.69.186) 56(84) 比特的数据。
 rtt min/avg/max/mdev = 39.218/41.938/47.226/3.739 ms
 ```
 
-<h3>上机实操测试，用于创建 Linux 普通用户的命令是</h3>
+## 上机实操测试，用于创建 Linux 普通用户的命令是
 
 ```shell
 // highlight-next-line
@@ -135,7 +135,7 @@ rtt min/avg/max/mdev = 39.218/41.938/47.226/3.739 ms
 [sudo] a123 的密码：
 ```
 
-<h3>上机实操进程管理操作，用于强制结束指定 PID 进程的基础命令是</h3>
+## 上机实操进程管理操作，用于强制结束指定 PID 进程的基础命令是
 
 ```shell
 [a123@localhost ~]$ kill -9 33742
@@ -143,7 +143,7 @@ rtt min/avg/max/mdev = 39.218/41.938/47.226/3.739 ms
 
 进程 PID 不是固定的，要配合 `ps -ef` 的查询结果来输入
 
-<h3>上机实操网络配置，以下可实现网卡开机自动启动的配置参数是</h3>
+## 上机实操网络配置，以下可实现网卡开机自动启动的配置参数是
 
 ```shell
 // highlight-next-line
@@ -175,7 +175,7 @@ systemctl restart NetworkManager
 ```
 :::
 
-<h3>上机实操 yum 服务操作，安装 httpd 网页服务的正确命令是</h3>
+## 上机实操 yum 服务操作，安装 httpd 网页服务的正确命令是
 
 ```shell
 // highlight-next-line
@@ -202,7 +202,7 @@ systemctl restart NetworkManager
  mod_lua
 ```
 
-<h3>上机实操测试，查看系统路由表信息的命令是</h3>
+## 上机实操测试，查看系统路由表信息的命令是
 
 ```shell
 // highlight-next-line
@@ -213,7 +213,7 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 192.168.42.0    0.0.0.0         255.255.255.0   U     100    0        0 ens160
 ```
 
-<h3>上机实操用户权限配置，将用户加入附属组的参数是</h3>
+## 上机实操用户权限配置，将用户加入附属组的参数是
 
 ```shell
 [a123@localhost ~]$ sudo useradd test
@@ -221,7 +221,7 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 [a123@localhost ~]$ sudo usermod -aG test2 test
 ```
 
-<h3>上机实操 Shell 脚本测试，以下可实现循环输出数字 1-5 的语法是</h3>
+## 上机实操 Shell 脚本测试，以下可实现循环输出数字 1-5 的语法是
 
 ```shell
 [a123@localhost ~]$ nano shelljiaoben.sh
@@ -248,7 +248,7 @@ done
 当前数字：5
 ```
 
-<h3>nmcli 网卡配置文件示例</h3>
+## nmcli 网卡配置文件示例
 
 权限要求：连接配置文件必须 `600`，属主 `root:root`
 

@@ -25,7 +25,7 @@ Liunx 第2套纯实操练习。
 本套试题都在**管理员权限**下操作！
 :::
 
-<h3>上机实操一步式递归创建 /usr/project/dev/data 嵌套层级目录</h3>
+## 上机实操一步式递归创建 /usr/project/dev/data 嵌套层级目录
 
 ```shell
 // highlight-next-line
@@ -36,7 +36,7 @@ data
 
 `-p` 递归创建多层目录，且目录已存在时不报错
 
-<h3>在 /usr/project 目录创建 app.log 文件，设置权限为755</h3>
+## 在 /usr/project 目录创建 app.log 文件，设置权限为755
 
 ```shell
 // highlight-start
@@ -51,7 +51,7 @@ drwxr-xr-x. 3 root root 18  6月 21 18:34 dev
 
 755权限为 `-rwxr-xr-x`
 
-<h3>将 /etc/profile.d/lang.sh 文件复制到 /usr/project/dev/ 目录，保留所有属性权限</h3>
+## 将 /etc/profile.d/lang.sh 文件复制到 /usr/project/dev/ 目录，保留所有属性权限
 
 ```shell
 // highlight-next-line
@@ -64,7 +64,7 @@ drwxr-xr-x. 2 root root    6  6月 21 18:34 data
 
 `-p` 保留文件原有全部属性
 
-<h3>递归删除 /usr/project/dev/data 目录下所有内容，保留空目录</h3>
+## 递归删除 /usr/project/dev/data 目录下所有内容，保留空目录
 
 ```shell
 // highlight-next-line
@@ -76,7 +76,7 @@ drwxr-xr-x. 2 root root    6  6月 21 18:34 data
 
 `-d` 只显示目录本身，不展开内部文件
 
-<h3>创建普通测试用户 testuser，指定专属家目录 /home/testuser</h3>
+## 创建普通测试用户 testuser，指定专属家目录 /home/testuser
 
 ```shell
 // highlight-next-line
@@ -87,7 +87,7 @@ drwxr-xr-x. 2 root root    6  6月 21 18:34 data
 a123  testuser
 ```
 
-<h3>创建用户组 testgroup，将 testuser 用户加入附属组 testgroup</h3>
+## 创建用户组 testgroup，将 testuser 用户加入附属组 testgroup
 
 ```shell
 // highlight-start
@@ -98,13 +98,13 @@ a123  testuser
 用户id=1001(testuser) 组id=1001(testuser) 组=1001(testuser),1002(testgroup)
 ```
 
-<h3>设置 testuser 密码有效期最长15天，过期自动提醒改密</h3>
+## 设置 testuser 密码有效期最长15天，过期自动提醒改密
 
 ```shell
 [root@localhost ~]# chage -M 15 testuser
 ```
 
-<h3>查看 testuser 用户的密码有效期详细配置信息</h3>
+## 查看 testuser 用户的密码有效期详细配置信息
 
 ```shell
 [root@localhost ~]# chage -l testuser
@@ -117,7 +117,7 @@ a123  testuser
 在密码过期之前警告的天数	：7
 ```
 
-<h3>人性化查看系统磁盘分区总容量、已用、剩余空间</h3>
+## 人性化查看系统磁盘分区总容量、已用、剩余空间
 
 ```shell
 [root@localhost ~]# df -h
@@ -130,7 +130,7 @@ tmpfs                331M  6.9M  324M    3% /run
 tmpfs                166M  100K  165M    1% /run/user/1000
 ```
 
-<h3>创建 /mnt/iso 目录，临时挂载光盘镜像至该目录并验证</h3>
+## 创建 /mnt/iso 目录，临时挂载光盘镜像至该目录并验证
 
 :::warning
 执行命令之前必须确保虚拟机已挂载一个 ISO 镜像文件！
@@ -147,7 +147,7 @@ mount: /mnt/iso: WARNING: source write-protected, mounted read-only.
  autorun.inf   manifest.txt    setup64.exe      VMwareToolsUpgrader.exe
 ```
 
-<h3>查看系统所有进程，筛选精准匹配 nginx 守护进程</h3>
+## 查看系统所有进程，筛选精准匹配 nginx 守护进程
 
 ```shell
 [root@localhost ~]# ps -ef | grep nginx | grep -v grep
@@ -155,7 +155,7 @@ mount: /mnt/iso: WARNING: source write-protected, mounted read-only.
 
 `ps -ef | grep <要查找的进程名称> | grep -v grep`
 
-<h3>强制终止 PID 为1200的异常进程，释放系统资源</h3>
+## 强制终止 PID 为1200的异常进程，释放系统资源
 
 ```shell
 [root@localhost ~]# kill -9 1200
@@ -163,7 +163,7 @@ mount: /mnt/iso: WARNING: source write-protected, mounted read-only.
 
 进程 PID 不是固定的，要配合 `ps -ef` 的查询结果来输入
 
-<h3>查看系统所有网络接口、IP、MAC 地址完整信息</h3>
+## 查看系统所有网络接口、IP、MAC 地址完整信息
 
 ```shell
 [root@localhost ~]# ip addr
@@ -182,7 +182,7 @@ mount: /mnt/iso: WARNING: source write-protected, mounted read-only.
        valid_lft forever preferred_lft forever
 ```
 
-<h3>永久配置网卡静态 IP、网关、DNS，设置开机自启并验证</h3>
+## 永久配置网卡静态 IP、网关、DNS，设置开机自启并验证
 
 ```shell
 [root@localhost ~]# nmcli connection show
@@ -314,7 +314,7 @@ chown root:root /etc/NetworkManager/system-connections/<新建的配置文件>
 | 255.255.255.240 | /28 | 设备极少场景 |
 | 255.255.255.252 | /30 | 点对点互联 |
 
-<h3>查看系统当前默认网关路由信息</h3>
+## 查看系统当前默认网关路由信息
 
 ```shell
 [root@localhost ~]# route -n
@@ -324,7 +324,7 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 192.168.42.0    0.0.0.0         255.255.255.0   U     100    0        0 ens160
 ```
 
-<h3>解析域名 `www.baidu.com`，获取对应公网IP</h3>
+## 解析域名 `www.baidu.com`，获取对应公网IP
 
 ```shell
 [root@localhost ~]# nslookup www.baidu.com
@@ -343,7 +343,7 @@ Name:	www.a.shifen.com
 Address: 2408:8756:c52:15df:0:ff:b073:d207
 ```
 
-<h3>安装 httpd 网页服务，启动、设置开机自启、查看运行状态</h3>
+## 安装 httpd 网页服务，启动、设置开机自启、查看运行状态
 
 ```shell
 // highlight-next-line
@@ -398,7 +398,7 @@ Created symlink /etc/systemd/system/multi-user.target.wants/httpd.service → /u
              └─33965 /usr/sbin/httpd -DFOREGROUND
 ```
 
-<h3>修改 vsftpd 配置，开启本地用户登录权限，重启服务生效</h3>
+## 修改 vsftpd 配置，开启本地用户登录权限，重启服务生效
 
 :::warning
 
@@ -445,7 +445,7 @@ local_umask=022
 [root@localhost ~]# systemctl restart vsftpd
 ```
 
-<h3>清除系统全部 YUM 缓存，重新生成最新缓存</h3>
+## 清除系统全部 YUM 缓存，重新生成最新缓存
 
 ```shell
 // highlight-next-line
@@ -459,7 +459,7 @@ CentOS Stream 9 - Extras packages     22 kB/s |  21 kB     00:00
 元数据缓存已建立。
 ```
 
-<h3>防火墙永久放行https服务，重载规则并查看放行列表</h3>
+## 防火墙永久放行https服务，重载规则并查看放行列表
 
 ```shell
 // highlight-next-line
@@ -473,7 +473,7 @@ success
 cockpit dhcpv6-client https ssh
 ```
 
-<h3>编写脚本输出系统当前操作系统版本</h3>
+## 编写脚本输出系统当前操作系统版本
 
 ```shell
 [root@localhost ~]# nano system-version.sh
@@ -494,7 +494,7 @@ cat /etc/redhat-release
 CentOS Stream release 9
 ```
 
-<h3>编写脚本判断 /usr/project 目录是否存在，不存在则创建</h3>
+## 编写脚本判断 /usr/project 目录是否存在，不存在则创建
 
 ```shell
 [root@localhost ~]# nano check-dir.sh
@@ -518,7 +518,7 @@ fi
 /usr/project
 ```
 
-<h3>编写脚本批量创建 user10 - user12 三个普通用户</h3>
+## 编写脚本批量创建 user10 - user12 三个普通用户
 
 ```shell
 [root@localhost ~]# nano batch-user.sh
@@ -543,7 +543,7 @@ done
 用户id=1002(user10) 组id=1003(user10) 组=1003(user10)
 ```
 
-<h3>编写脚本统计当前系统内存使用情况并输出</h3>
+## 编写脚本统计当前系统内存使用情况并输出
 
 ```shell
 [root@localhost ~]# nano mem-info.sh
