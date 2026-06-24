@@ -196,8 +196,6 @@ ens160.nmconnection
 
 `ens160.nmconnection` 的原始内容：
 
-具体修改看下文
-
 ```ini
 [connection]
 id=ens160
@@ -218,6 +216,10 @@ method=auto
 
 [proxy]
 ```
+
+:::danger
+完成该题后请将配置恢复成未修改前的样子，否则无法连接网络！
+:::
 
 重载配置：`nmcli connection reload`
 
