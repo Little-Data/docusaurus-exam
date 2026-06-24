@@ -85,6 +85,8 @@ sysuser:x:1001:1001::/home/sysuser:/sbin/nologin
 a123456789
 ```
 
+`-M` 不创建家目录，`-s` 指定登录 shell 为不可登录终端
+
 ## 创建用户组 netgroup，将 student 用户加入该附属组
 
 ```shell

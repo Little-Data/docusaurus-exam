@@ -1,16 +1,16 @@
 ---
 slug: Linux_Practice_Exercises_01
-title: Liunx 第1套纯实操练习
+title: Liunx 第1套练习
 tags: [Linux网络操作系统]
-description: Liunx 第1套纯实操练习
+description: Liunx 第1套练习
 hide_table_of_contents: false
 date: 2026-06-08T08:00
 last_update:
-  date: 2026-06-21T17:16
+  date: 2026-06-25T01:29
 unlisted: false
 ---
 
-Liunx 第1套纯实操练习。
+Liunx 第1套练习。
 
 相关图书：《Linux网络操作系统项目教程》-中国工信出版集团、人民邮电出版社-杨云-ISBN9787115673602
 
@@ -331,3 +331,177 @@ chown root:root /etc/NetworkManager/system-connections/<新建的配置文件>
 | 255.255.255.224 | /27 | 小型业务网段 |
 | 255.255.255.240 | /28 | 设备极少场景 |
 | 255.255.255.252 | /30 | 点对点互联 |
+
+## 填空
+
+<Workpaper>
+<Workpapersettings />
+  <Workitem tiankong>
+    <Wenben>1. 上机实操在 /home 目录下创建 test 文件夹的Linux 命令是</Wenben>
+    <Ansinput />
+    <Jiexi>
+    sudo mkdir /home/test
+
+    [实操：上机实操在 /home 目录下创建 test 文件夹的 Linux 命令是](#上机实操在-home-目录下创建-test-文件夹的-linux-命令是)
+    </Jiexi>
+  </Workitem>
+  <Workitem tiankong>
+    <Wenben>2. 上机实操创建空白文件 hello.txt 的命令是</Wenben>
+    <Ansinput />
+    <Jiexi>
+    touch hello.txt
+
+    [实操：上机实操创建空白文件 hello.txt 的命令是](#上机实操创建空白文件-hellotxt-的命令是)
+    </Jiexi>
+  </Workitem>
+  <Workitem tiankong>
+    <Wenben>3. 上机实操删除指定文件的命令是</Wenben>
+    <Ansinput />
+    <Jiexi>
+    rm hello.txt
+    
+    [实操：上机实操删除指定文件的命令是](#上机实操删除指定文件的命令是)
+    </Jiexi>
+  </Workitem>
+  <Workitem tiankong>
+    <Wenben>4. 上机实操查看 /etc/profile 文件全部内容的命令是</Wenben>
+    <Ansinput />
+    <Jiexi>
+    cat /etc/profile
+    
+    [实操：上机实操查看 /etc/profile 文件全部内容的命令是](#上机实操查看-etcprofile-文件全部内容的命令是)
+    </Jiexi>
+  </Workitem>
+  <Workitem tiankong>
+    <Wenben>5. 上机实操人性化查看系统整体磁盘空间的命令是</Wenben>
+    <Ansinput />
+    <Jiexi>
+    df -h
+    
+    [实操：上机实操人性化查看系统整体磁盘空间的命令是](#上机实操人性化查看系统整体磁盘空间的命令是)
+    </Jiexi>
+  </Workitem>
+  <Workitem tiankong>
+    <Wenben>6. 上机实操查看系统所有运行进程的命令是</Wenben>
+    <Ansinput />
+    <Jiexi>
+    ps -ef
+
+    [实操：上机实操查看系统所有运行进程的命令是](#上机实操查看系统所有运行进程的命令是)
+    </Jiexi>
+  </Workitem>
+  <Workitem tiankong>
+    <Wenben>7. 上机实操永久关闭防火墙并禁止开机自启的完整命令组中，关闭防火墙的命令是</Wenben>
+    <Ansinput />
+    <Jiexi>
+    sudo systemctl stop firewalld
+    
+    sudo systemctl disable firewalld
+    
+    [实操：上机实操永久关闭防火墙并禁止开机自启的完整命令组中，关闭防火墙的命令是](#上机实操永久关闭防火墙并禁止开机自启的完整命令组中关闭防火墙的命令是)
+    </Jiexi>
+  </Workitem>
+  <Workitem tiankong>
+    <Wenben>8. 上机实操测试外网连通性、发送 3 次数据包的 ping 命令是</Wenben>
+    <Ansinput />
+    <Jiexi>
+    `ping -c 3 www.baidu.com`
+    
+    [实操：上机实操测试外网连通性、发送 3 次数据包的 ping 命令是](#上机实操测试外网连通性发送-3-次数据包的-ping-命令是)
+    </Jiexi>
+  </Workitem>
+</Workpaper>
+
+## 单选
+
+<Workpaper>
+<Workpapersettings />
+  <Workitem xuanze>
+    <Wenben>1. 上机实操测试，用于创建 Linux 普通用户的命令是</Wenben>
+    <Xuanxiang>groupadd</Xuanxiang>
+    <Xuanxiang ans>useradd</Xuanxiang>
+    <Xuanxiang>usermod</Xuanxiang>
+    <Xuanxiang>userdel</Xuanxiang>
+    <Jiexi>[实操：上机实操测试，用于创建 Linux 普通用户的命令是](#上机实操测试用于创建-linux-普通用户的命令是)</Jiexi>
+  </Workitem>
+  <Workitem xuanze>
+    <Wenben>2. 上机实操测试，可实现人性化展示磁盘空间使用情况的参数是</Wenben>
+    <Xuanxiang>-a</Xuanxiang>
+    <Xuanxiang ans>-h</Xuanxiang>
+    <Xuanxiang>-l</Xuanxiang>
+    <Xuanxiang>-s</Xuanxiang>
+    <Jiexi>[实操：上机实操人性化查看系统整体磁盘空间的命令是](#上机实操人性化查看系统整体磁盘空间的命令是)</Jiexi>
+  </Workitem>
+  <Workitem xuanze>
+    <Wenben>3. 上机实操进程管理操作，用于强制结束指定 PID 进程的基础命令是</Wenben>
+    <Xuanxiang>ps</Xuanxiang>
+    <Xuanxiang>top</Xuanxiang>
+    <Xuanxiang ans>kill</Xuanxiang>
+    <Xuanxiang>df</Xuanxiang>
+    <Jiexi>[实操：上机实操进程管理操作，用于强制结束指定 PID 进程的基础命令是](#上机实操进程管理操作用于强制结束指定-pid-进程的基础命令是)</Jiexi>
+  </Workitem>
+  <Workitem xuanze>
+    <Wenben>4. 上机实操网络配置，以下可实现网卡开机自动启动的配置参数是</Wenben>
+    <Xuanxiang ans>ONBOOT=yes</Xuanxiang>
+    <Xuanxiang>BOOTPROTO=static</Xuanxiang>
+    <Xuanxiang>IPADDR</Xuanxiang>
+    <Xuanxiang>GATEWAY</Xuanxiang>
+    <Jiexi>
+    :::warning
+    虽然这些方法已失效，但只有这些选项的话就记住这个答案就行
+    :::
+
+    [实操：上机实操网络配置，以下可实现网卡开机自动启动的配置参数是](#上机实操网络配置以下可实现网卡开机自动启动的配置参数是)
+    </Jiexi>
+  </Workitem>
+  <Workitem xuanze>
+    <Wenben>5. 上机实操 yum 服务操作，安装 httpd 网页服务的正确命令是</Wenben>
+    <Xuanxiang>yum remove httpd</Xuanxiang>
+    <Xuanxiang ans>yum install -y httpd</Xuanxiang>
+    <Xuanxiang>systemctl start httpd</Xuanxiang>
+    <Xuanxiang>systemctl enable httpd</Xuanxiang>
+    <Jiexi>[实操：上机实操 yum 服务操作，安装 httpd 网页服务的正确命令是](#上机实操-yum-服务操作安装-httpd-网页服务的正确命令是)</Jiexi>
+  </Workitem>
+  <Workitem xuanze>
+    <Wenben>6. 上机实操测试，查看系统路由表信息的命令是</Wenben>
+    <Xuanxiang>ifconfig</Xuanxiang>
+    <Xuanxiang>ping</Xuanxiang>
+    <Xuanxiang ans>route -n</Xuanxiang>
+    <Xuanxiang>du -sh</Xuanxiang>
+    <Jiexi>[实操：上机实操测试，查看系统路由表信息的命令是](#上机实操测试查看系统路由表信息的命令是)</Jiexi>
+  </Workitem>
+  <Workitem xuanze>
+    <Wenben>7. 上机实操用户权限配置，将用户加入附属组的参数是</Wenben>
+    <Xuanxiang ans>-aG</Xuanxiang>
+    <Xuanxiang>-g</Xuanxiang>
+    <Xuanxiang>-u</Xuanxiang>
+    <Xuanxiang>-m</Xuanxiang>
+    <Jiexi>[实操：上机实操用户权限配置，将用户加入附属组的参数是](#上机实操用户权限配置将用户加入附属组的参数是)</Jiexi>
+  </Workitem>
+  <Workitem xuanze>
+    <Wenben>8. 上机实操 Shell 脚本测试，以下可实现循环输出数字 1-5 的语法是</Wenben>
+    <Xuanxiang>if 判断语句</Xuanxiang>
+    <Xuanxiang ans>for 循环语句</Xuanxiang>
+    <Xuanxiang>while 循环语句</Xuanxiang>
+    <Xuanxiang>条件运算符</Xuanxiang>
+    <Jiexi>[实操：上机实操 Shell 脚本测试，以下可实现循环输出数字 1-5 的语法是](#上机实操-shell-脚本测试以下可实现循环输出数字-1-5-的语法是)</Jiexi>
+  </Workitem>
+</Workpaper>
+
+## 判断
+
+<Workpaper>
+<Workpapersettings />
+  <Workitem xuanze>
+    <Wenben>1. 上机实操 mkdir 命令，可用于在系统指定路径下创建新的目录文件夹</Wenben>
+    <Xuanxiang ans>对</Xuanxiang>
+    <Xuanxiang>错</Xuanxiang>
+    <Jiexi>[实操：上机实操在 /home 目录下创建 test 文件夹的 Linux 命令是](#上机实操在-home-目录下创建-test-文件夹的-linux-命令是)</Jiexi>
+  </Workitem>
+  <Workitem xuanze>
+    <Wenben>2. 上机实操 du -sh 命令，可以查看指定目录整体占用的磁盘空间大小</Wenben>
+    <Xuanxiang ans>对</Xuanxiang>
+    <Xuanxiang>错</Xuanxiang>
+    <Jiexi>[实操：上机实操人性化查看系统整体磁盘空间的命令是](#上机实操人性化查看系统整体磁盘空间的命令是)</Jiexi>
+  </Workitem>
+</Workpaper>
