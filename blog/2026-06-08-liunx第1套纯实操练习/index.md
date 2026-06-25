@@ -6,7 +6,7 @@ description: Liunx 第1套练习
 hide_table_of_contents: false
 date: 2026-06-08T08:00
 last_update:
-  date: 2026-06-25T01:29
+  date: 2026-06-25T21:32
 unlisted: false
 ---
 
@@ -504,4 +504,180 @@ chown root:root /etc/NetworkManager/system-connections/<新建的配置文件>
     <Xuanxiang>错</Xuanxiang>
     <Jiexi>[实操：上机实操人性化查看系统整体磁盘空间的命令是](#上机实操人性化查看系统整体磁盘空间的命令是)</Jiexi>
   </Workitem>
+  <Workitem xuanze>
+    <Wenben>3. 上机配置网卡静态 IP 后，无需重启网络服务即可永久生效配置</Wenben>
+    <Xuanxiang>对</Xuanxiang>
+    <Xuanxiang ans>错</Xuanxiang>
+    <Jiexi>[实操：上机实操网络配置，以下可实现网卡开机自动启动的配置参数是](#上机实操网络配置以下可实现网卡开机自动启动的配置参数是)</Jiexi>
+  </Workitem>
+  <Workitem xuanze>
+    <Wenben>4. 上机实操 systemctl enable 命令，可设置服务开机自动启动</Wenben>
+    <Xuanxiang ans>对</Xuanxiang>
+    <Xuanxiang>错</Xuanxiang>
+    <Jiexi>[实操：上机实操 yum 服务操作，安装 httpd 网页服务的正确命令是](#上机实操-yum-服务操作安装-httpd-网页服务的正确命令是)</Jiexi>
+  </Workitem>
+  <Workitem xuanze>
+    <Wenben>5. 上机实操 ping -c 3 命令，可指定发送数据包次数，避免持续 ping 测试</Wenben>
+    <Xuanxiang ans>对</Xuanxiang>
+    <Xuanxiang>错</Xuanxiang>
+    <Jiexi>[实操：上机实操测试外网连通性、发送 3 次数据包的 ping 命令是](#上机实操测试外网连通性发送-3-次数据包的-ping-命令是)</Jiexi>
+  </Workitem>
+  <Workitem xuanze>
+    <Wenben>6. 上机使用 useradd 创建用户后，用户默认无需设置密码即可登录系统</Wenben>
+    <Xuanxiang>对</Xuanxiang>
+    <Xuanxiang ans>错</Xuanxiang>
+  </Workitem>
+  <Workitem xuanze>
+    <Wenben>7. 上机实操 cat 命令，可用于查看系统文本文件的全部内容</Wenben>
+    <Xuanxiang ans>对</Xuanxiang>
+    <Xuanxiang>错</Xuanxiang>
+    <Jiexi>[实操：上机实操查看 /etc/profile 文件全部内容的命令是](#上机实操查看-etcprofile-文件全部内容的命令是)</Jiexi>
+  </Workitem>
+  <Workitem xuanze>
+    <Wenben>8. 防火墙未设置开机禁用，重启后自动开启</Wenben>
+    <Xuanxiang ans>对</Xuanxiang>
+    <Xuanxiang>错</Xuanxiang>
+    <Jiexi>[实操：上机实操永久关闭防火墙并禁止开机自启的完整命令组中，关闭防火墙的命令是](#上机实操永久关闭防火墙并禁止开机自启的完整命令组中关闭防火墙的命令是)</Jiexi>
+  </Workitem>
 </Workpaper>
+
+## 实操简答
+
+<Workpaper>
+<Workpapersettings />
+  <Workitem tiankong>
+    <Wenben>1. 上机实操 Linux 文件目录全套操作，完成文件夹创建、文件创建、文件删除、文件查看全过程，写出实操步骤与运行现象</Wenben>
+    <Ansinput />
+    <Jiexi>
+    命令提示：
+
+    文件夹创建：`mkdir`
+
+    文件创建：`touch`
+
+    文件删除：`rm`
+
+    文件查看：`cat`
+    </Jiexi>
+  </Workitem>
+  <Workitem tiankong>
+    <Wenben>2. 上机实操用户与用户组配置全套操作，完成用户、用户组创建及用户加入附属组操作，写出实操步骤和实测效果</Wenben>
+    <Ansinput />
+    <Jiexi>
+    命令提示：
+
+    用户创建：`useradd`
+
+    用户组创建：`groupadd`
+
+    用户加入附属组：`usermod -aG 用户组 用户`
+    </Jiexi>
+  </Workitem>
+  <Workitem tiankong>
+    <Wenben>3. 上机实操 httpd 网页服务安装、启动、自启、状态查看全套操作，写出实操流程与服务运行效果</Wenben>
+    <Ansinput />
+    <Jiexi>
+    命令提示：
+
+    安装 httpd：`sudo yum install -y httpd`
+
+    启动：`sudo systemctl start httpd`
+
+    自启：`sudo systemctl enable httpd`
+    
+    状态查看：`sudo systemctl status httpd`
+    </Jiexi>
+  </Workitem>
+</Workpaper>
+
+## 实操复现
+
+<Workpaper>
+<Workpapersettings />
+  <Workitem tiankong>
+    <Wenben> 
+    1. Linux磁盘与进程管理实操复现
+
+    上机打开 CentOS 终端，独立完成全套实操：
+
+    ①实操命令查看系统整体磁盘使用情况
+
+    ②实操命令查看 /home 目录磁盘占用大小
+
+    ③查看系统全部运行进程
+
+    ④执行命令结束指定 PID 进程
+    
+    留存每一步实操截图。请详细写出实操步骤、对应命令及实操结果。
+    </Wenben>
+    <Ansinput />
+    <Jiexi>
+    命令提示：
+
+    查看系统整体磁盘使用情况：`df -h`
+
+    查看 /home 目录磁盘占用大小：`du -sh /home`
+
+    查看系统全部运行进程：`ps -ef`
+
+    结束指定 PID 进程：`kill -9 PID号`
+    </Jiexi>
+  </Workitem>
+  <Workitem tiankong>
+    <Wenben>
+    2. Linux 静态网络配置与网络运维实操复现
+    
+    上机基于 CentOS 系统，独立完成全套实操：
+    
+    ①编辑网卡配置文件，配置永久静态 IP、网关、DNS
+    
+    ②重启网络服务使配置生效
+    
+    ③测试外网百度连通性
+    
+    ④查看系统路由表
+    
+    完整留存实操与复测截图。请详细写出实操步骤、对应命令及实操结果。
+    </Wenben>
+    <Ansinput />
+    <Jiexi>
+    [实操：上机实操网络配置，以下可实现网卡开机自动启动的配置参数是](#上机实操网络配置以下可实现网卡开机自动启动的配置参数是)
+
+    [实操：上机实操测试外网连通性、发送 3 次数据包的 ping 命令是](#上机实操测试外网连通性发送-3-次数据包的-ping-命令是)
+
+    查看系统路由表：`route -n`
+    </Jiexi>
+  </Workitem>
+</Workpaper>
+
+## 实操项目
+
+1. 基础文件目录实操：完成目录创建、文件创建、文件删除、文件查看全套基础操作，操作无报错、结果有效
+
+参考[实操简答](#实操简答)第 1 题
+
+2. 用户权限运维实操：完成用户、用户组创建，密码设置、用户附属组配置，验证权限配置生效
+
+参考[实操简答](#实操简答)第 2 题
+
+3. 磁盘进程管理实操：实操查询磁盘空间、目录占用大小，查看系统进程、终止指定进程，熟练掌握运维命令
+
+参考[实操复现](#实操复现)第 1 题
+
+4. 网络配置实操：配置永久静态IP，重启网络服务，测试外网连通性、查看系统路由表，保障网络正常运行。
+
+参考[实操复现](#实操复现)第 2 题
+
+5. 服务搭建与加固：安装并配置 httpd 网页服务，设置开机自启，关闭防火墙并永久禁用，优化系统安全配置
+
+参考[实操简答](#实操简答)第 3 题
+
+6. Shell 脚本实操：独立编写 4 类基础脚本，实现字符输出、时间查询、目录判断、循环输出功能，脚本可正常运行
+
+字符输出：脚本文件内容`echo "要输出的字符"`
+
+时间查询：[编写脚本，输出当前系统日期与时间](/Linux_Practice_Exercises_05#编写脚本输出当前系统日期与时间)
+
+目录判断：[编写脚本，判断 /tmp 目录是否为目录文件，是则输出“目录正常”](/Linux_Practice_Exercises_03#编写脚本判断-tmp-目录是否为目录文件是则输出目录正常)
+
+循环输出功能：[上机实操 Shell 脚本测试，以下可实现循环输出数字 1-5 的语法是](#上机实操-shell-脚本测试以下可实现循环输出数字-1-5-的语法是)
