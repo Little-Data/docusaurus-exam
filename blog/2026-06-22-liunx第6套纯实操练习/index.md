@@ -70,7 +70,7 @@ drwxr-xr-x. 2 root root 6  6月 24 23:59 logs
 ```
 
 :::warning
-原说明中的 `/etc/resolv.conf /usr/soft/nginx/logs/` 路径有误，应为 `/usr/soft/nginx/conf/logs/`
+原说明中的 `/usr/soft/nginx/logs/` 路径有误，应为 `/usr/soft/nginx/conf/logs/`
 :::
 
 ## 上机实操查找 /var/log 目录下所有后缀为 .log 的日志文件命令
