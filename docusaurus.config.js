@@ -68,7 +68,7 @@ const config = {
           blogSidebarCount: 0,
           showLastUpdateTime: true,
           remarkPlugins: [remarkMath],
-          rehypePlugins: [rehypeKatex],
+          rehypePlugins: [[rehypeKatex, { strict: false }]],
         },
         theme: {
           customCss: './src/css/custom.css',
