@@ -19,7 +19,7 @@ unlisted: false
 {/* truncate */}
 
 <Workpaper>
-<Workpapersettings showans="true" />
+<Workpapersettings />
   <Workitem tiankong>
     <Wenben>
     1. 小王搬入新居后，在厨房安装了一台电热水壶。壶身铭牌上标注“220V 2200W”，而家中电能表标注“220V 10(40)A”。小王想从电工学角度分析一下这个电热水壶的工作参数：
