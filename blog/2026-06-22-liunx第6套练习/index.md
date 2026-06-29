@@ -419,3 +419,51 @@ rtt min/avg/max/mdev = 50.074/141.773/239.600/66.888 ms
     </Jiexi>
   </Workitem>
 </Workpaper>
+
+## 实操项目
+
+1. 完成多层嵌套目录创建、文件权限修改、属性保留复制、指定类型日志文件查找，操作无报错、结果有效。
+
+参考[Liunx 第5套练习：实操简答](/Linux_Practice_Exercises_05#实操简答) 第 1 题
+
+2. 完成指定 UID 业务用户创建、用户组配置、密码最短周期设置、可登录用户查询，验证权限配置生效
+
+[实操：上机实操创建用户并指定用户 UID 的参数](#上机实操创建用户并指定用户-uid-的参数)
+
+[实操：上机实操设置用户密码最短使用期限为7天的命令](#上机实操设置用户密码最短使用期限为7天的命令)
+
+可登录用户查询：`grep '/bin/bash$' /etc/passwd`
+
+验证权限配置：`chage -l`
+
+3. 实操查看磁盘文件系统信息、临时挂载光盘设备、监控系统资源负载、批量终止同名进程，熟练掌握运维命令
+
+参考[Liunx 第3套练习：查看系统块设备信息、查看当前系统所有挂载点详细信息](/Linux_Practice_Exercises_03#查看系统块设备信息查看当前系统所有挂载点详细信息)
+
+参考[Liunx 第3套练习：临时挂载光盘镜像到 /media/cdrom，只读挂载，验证挂载成功](/Linux_Practice_Exercises_03#临时挂载光盘镜像到-mediacdrom只读挂载验证挂载成功)
+
+参考[Liunx 第3套练习：动态监控系统进程，筛选出 cpu 占用最高的进程](/Linux_Practice_Exercises_03#动态监控系统进程筛选出-cpu-占用最高的进程)
+
+参考[Liunx 第3套练习：查询系统中所有包含 ssh 的进程，优雅终止所有 ssh 相关进程](/Linux_Practice_Exercises_03#查询系统中所有包含-ssh-的进程优雅终止所有-ssh-相关进程)
+
+4. 配置永久静态IP与DNS、重启网络验证、配置本地域名映射、外网连通性测试，保障网络配置稳定生效
+
+参考[Liunx 第2套练习：永久配置网卡静态-ip网关dns设置开机自启并验证](/Linux_Practice_Exercises_02#永久配置网卡静态-ip网关dns设置开机自启并验证)
+
+5. 安装 rpcbind 依赖服务、自定义网站首页、更新YUM缓存、查询软件、永久放行ftp防火墙端口，优化服务安全配置
+
+安装 rpcbind 依赖服务：`yum install -y rpcbind`
+
+参考[Liunx 第3套练习：重置 httpd 默认首页，自定义网页内容为“考试专用服务页面”，重启服务验证](/Linux_Practice_Exercises_03#重置-httpd-默认首页自定义网页内容为考试专用服务页面重启服务验证)
+
+更新 YUM 缓存：`yum clean all && yum makecache`
+
+参考[Liunx 第5套练习：查询系统中是否已安装 vsftpd 软件，写出查询命令](/Linux_Practice_Exercises_05#查询系统中是否已安装-vsftpd-软件写出查询命令)
+
+永久放行 ftp 防火墙端口：
+
+```shell
+firewall-cmd --permanent --add-port=21/tcp
+
+sudo firewall-cmd --reload
+```

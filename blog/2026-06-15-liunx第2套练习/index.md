@@ -1,16 +1,16 @@
 ---
 slug: Linux_Practice_Exercises_02
-title: Liunx 第2套纯实操练习
+title: Liunx 第2套练习
 tags: [Linux网络操作系统]
-description: Liunx 第2套纯实操练习
+description: Liunx 第2套练习
 hide_table_of_contents: false
 date: 2026-06-15T08:00
 last_update:
-  date: 2026-06-21T20:49
+  date: 2026-06-29T22:14
 unlisted: false
 ---
 
-Liunx 第2套纯实操练习。
+Liunx 第2套练习。
 
 相关图书：《Linux网络操作系统项目教程》-中国工信出版集团、人民邮电出版社-杨云-ISBN9787115673602
 
@@ -565,3 +565,152 @@ free -h
 Mem:           1.6Gi       1.2Gi       234Mi        10Mi       364Mi       405Mi
 Swap:          2.0Gi        90Mi       1.9Gi
 ```
+
+## 填空
+
+<Workpaper>
+<Workpapersettings />
+  <Workitem tiankong>
+    <Wenben>1. 上机实操一步式递归创建 /usr/project/dev/data 嵌套层级目录的命令是</Wenben>
+    <Ansinput />
+    <Jiexi> 
+    mkdir -p /usr/project/dev/data
+
+    [实操：上机实操一步式递归创建 /usr/project/dev/data 嵌套层级目录](#上机实操一步式递归创建-usrprojectdevdata-嵌套层级目录)
+    </Jiexi>
+  </Workitem>
+  <Workitem tiankong>
+    <Wenben>2. 上机实操在 /usr/project 目录创建 app.log 文件并设置权限为755的完整操作命令是</Wenben>
+    <Ansinput />
+    <Jiexi> 
+    touch /usr/project/app.log
+
+    chmod 755 /usr/project/app.log
+
+    [实操：在 /usr/project 目录创建 app.log 文件，设置权限为755](#在-usrproject-目录创建-applog-文件设置权限为755)
+    </Jiexi>
+  </Workitem>
+  <Workitem tiankong>
+    <Wenben>3. 上机实操复制 /etc/profile.d/lang.sh 文件至 /usr/project/dev/ 目录并保留所有属性权限的命令是</Wenben>
+    <Ansinput />
+    <Jiexi> 
+    cp -p /etc/profile.d/lang.sh /usr/project/dev/
+
+    [实操：将 /etc/profile.d/lang.sh 文件复制到 /usr/project/dev/ 目录，保留所有属性权限](#将-etcprofiledlangsh-文件复制到-usrprojectdev-目录保留所有属性权限)
+    </Jiexi>
+  </Workitem>
+  <Workitem tiankong>
+    <Wenben>4. 上机实操递归删除 /usr/project/dev/data 目录内所有内容、保留空目录本身的命令是</Wenben>
+    <Ansinput />
+    <Jiexi> 
+    rm -rf /usr/project/dev/data/*
+
+    [实操：递归删除 /usr/project/dev/data 目录下所有内容，保留空目录](#递归删除-usrprojectdevdata-目录下所有内容保留空目录)
+    </Jiexi>
+  </Workitem>
+</Workpaper>
+
+## 单选
+
+<Workpaper>
+<Workpapersettings />
+  <Workitem xuanze>
+    <Wenben>1. 递归创建多级嵌套目录的核心参数是</Wenben>
+    <Xuanxiang>-m</Xuanxiang>
+    <Xuanxiang ans>-p</Xuanxiang>
+    <Xuanxiang>-r</Xuanxiang>
+    <Xuanxiang>-f</Xuanxiang>
+    <Jiexi>mkdir -p</Jiexi>
+  </Workitem>
+  <Workitem xuanze>
+    <Wenben>2. 复制文件时保留原有权限、时间、属性的参数是</Wenben>
+    <Xuanxiang>-r</Xuanxiang>
+    <Xuanxiang ans>-p</Xuanxiang>
+    <Xuanxiang>-f</Xuanxiang>
+    <Xuanxiang>-i</Xuanxiang>
+    <Jiexi>cp -p</Jiexi>
+  </Workitem>
+  <Workitem xuanze>
+    <Wenben>3. Linux系统强制删除文件/目录、无需交互确认的参数是</Wenben>
+    <Xuanxiang>-r</Xuanxiang>
+    <Xuanxiang>-i</Xuanxiang>
+    <Xuanxiang ans>-f</Xuanxiang>
+    <Xuanxiang>-v</Xuanxiang>
+    <Jiexi>rm -f</Jiexi>
+  </Workitem>
+  <Workitem xuanze>
+    <Wenben>4. 查看用户密码有效期详细配置信息的命令是</Wenben>
+    <Xuanxiang>passwd</Xuanxiang>
+    <Xuanxiang ans>chage -l</Xuanxiang>
+    <Xuanxiang>id</Xuanxiang>
+    <Xuanxiang>whoami</Xuanxiang>
+  </Workitem>
+</Workpaper>
+
+## 判断
+
+<Workpaper>
+<Workpapersettings />
+  <Workitem xuanze>
+    <Wenben>1. mkdir -p命令可一次性创建多级嵌套不存在目录</Wenben>
+    <Xuanxiang ans>对</Xuanxiang>
+    <Xuanxiang>错</Xuanxiang>
+  </Workitem>
+  <Workitem xuanze>
+    <Wenben>2. chmod 755 文件权限表示属主可读写执行，属组和其他用户仅读、执行权限</Wenben>
+    <Xuanxiang ans>对</Xuanxiang>
+    <Xuanxiang>错</Xuanxiang>
+  </Workitem>
+  <Workitem xuanze>
+    <Wenben>3. rm -rf /目录/* 会删除系统根目录所有核心文件，彻底损坏系统</Wenben>
+    <Xuanxiang ans>对</Xuanxiang>
+    <Xuanxiang>错</Xuanxiang>
+  </Workitem>
+  <Workitem xuanze>
+    <Wenben>4. chage -M 15 可设置用户密码最长有效期为 15 天，过期强制改密</Wenben>
+    <Xuanxiang ans>对</Xuanxiang>
+    <Xuanxiang>错</Xuanxiang>
+  </Workitem>
+</Workpaper>
+
+## 实操简答
+
+1. 上机实操磁盘空间人性化查看操作，写出完整实操步骤、所用命令及实操结果
+
+[实操：人性化查看系统磁盘分区总容量、已用、剩余空间](#人性化查看系统磁盘分区总容量已用剩余空间)
+
+2. 上机实操完成光盘镜像临时挂载（挂载至/mnt/iso目录），写出完整实操步骤与挂载验证结果
+
+[实操：创建 /mnt/iso 目录，临时挂载光盘镜像至该目录并验证](#创建-mntiso-目录临时挂载光盘镜像至该目录并验证)
+
+3. 上机实操精准筛选系统nginx进程，写出完整实操命令、操作步骤及筛选结果
+
+[实操：查看系统所有进程，筛选精准匹配 nginx 守护进程](#查看系统所有进程筛选精准匹配-nginx-守护进程)
+
+4. 上机实操使用 nslookup 工具解析百度域名公网 IP，写出实操步骤、命令及解析结果
+
+[实操：解析域名 www.baidu.com，获取对应公网IP](#解析域名-wwwbaiducom获取对应公网ip)
+
+## 实操复现
+
+1. 上机独立完成用户与密码有效期完整配置：创建testgroup用户组、创建testuser用户、将用户加入附属组、设置密码最长有效期15天，验证配置生效，写出全套实操步骤与命令
+
+[实操：创建用户组 testgroup，将 testuser 用户加入附属组 testgroup](#创建用户组-testgroup将-testuser-用户加入附属组-testgroup)
+
+[实操：设置 testuser 密码有效期最长15天，过期自动提醒改密](#设置-testuser-密码有效期最长15天过期自动提醒改密)
+
+[实操：查看 testuser 用户的密码有效期详细配置信息](#查看-testuser-用户的密码有效期详细配置信息)
+
+2. 上机配置永久静态网络IP，设置IP地址192.168.90.90、子网掩码255.255.255.0、网关192.168.90.1、DNS1=223.5.5.5，重启网络并复测外网连通性，写出完整实操步骤与验证结果
+
+[实操：永久配置网卡静态 IP、网关、DNS，设置开机自启并验证](#永久配置网卡静态-ip网关dns设置开机自启并验证)
+
+3. 上机完成httpd网页服务全套搭建：安装服务、启动服务、设置开机自启、查看服务状态、访问测试页面，重启虚拟机复测自启效果，写出全套实操流程
+
+[实操：安装 httpd 网页服务，启动、设置开机自启、查看运行状态](#安装-httpd-网页服务启动设置开机自启查看运行状态)
+
+[重置 httpd 默认首页，自定义网页内容为“考试专用服务页面”，重启服务验证](/Linux_Practice_Exercises_03#重置-httpd-默认首页自定义网页内容为考试专用服务页面重启服务验证)
+
+4. 上机完成防火墙 HTTPS 服务永久放行配置，重载规则并验证，重启虚拟机复测规则永久生效，写出完整实操步骤与验证结果。
+
+[实操：防火墙永久放行https服务，重载规则并查看放行列表](#防火墙永久放行https服务重载规则并查看放行列表)
