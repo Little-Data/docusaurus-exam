@@ -1,0 +1,441 @@
+import ExecutionEnvironment from '@docusaurus/ExecutionEnvironment';
+
+const STYLES = `
+.toc-mobile-btn {
+  position: fixed;
+  right: -18px;
+  bottom: 140px;
+  z-index: 1000;
+  width: 40px;
+  height: 40px;
+  border-radius: 20px 0 0 20px;
+  background: var(--ifm-color-primary);
+  color: white;
+  border: none;
+  box-shadow: -2px 2px 8px rgba(0,0,0,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 6px;
+  cursor: pointer;
+  transition: right 0.3s ease, opacity 0.3s;
+}
+.toc-mobile-btn.show {
+  right: 0;
+}
+.toc-mobile-btn svg {
+  width: 20px;
+  height: 20px;
+  fill: white;
+}
+
+.toc-mobile-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 2000;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+.toc-mobile-backdrop.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.toc-mobile-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 85vw;
+  max-width: 340px;
+  height: 100vh;
+  background-color: #ffffff;
+  color: var(--ifm-font-color-base);
+  opacity: 1;
+  z-index: 2001;
+  box-shadow: -4px 0 24px rgba(0,0,0,0.3);
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+[data-theme='dark'] .toc-mobile-drawer {
+  background-color: #1b1b1d;
+}
+.toc-mobile-drawer.open {
+  transform: translateX(0);
+}
+
+.toc-mobile-drawer-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--ifm-color-emphasis-600);
+  padding: 4px;
+  z-index: 10;
+}
+
+.toc-mobile-drawer-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 16px;
+  margin-top: 40px;
+}
+.toc-mobile-drawer-content .table-of-contents__link {
+  display: block;
+  padding: 6px 0;
+  font-size: 0.9rem;
+}
+`;
+
+const LIST_ICON = `
+<svg viewBox="0 0 24 24">
+  <path d="M3 4h18v2H3V4zm0 7h12v2H3v-2zm0 7h18v2H3v-2z"/>
+</svg>`;
+
+let button = null;
+let backdrop = null;
+let drawer = null;
+let scrollTimer = null;
+let mediaQuery = null;
+let isHovering = false;
+let observer = null;
+let dragging = false;
+let hasMoved = false;
+let startY = 0;
+let startBottom = 0;
+
+function injectStylesOnce() {
+  if (!document.getElementById('toc-mobile-styles')) {
+    const style = document.createElement('style');
+    style.id = 'toc-mobile-styles';
+    style.textContent = STYLES;
+    document.head.appendChild(style);
+  }
+}
+
+function startHideTimer(delay = 500) {
+  clearTimeout(scrollTimer);
+  scrollTimer = setTimeout(() => {
+    if (!isHovering && button) {
+      button.classList.remove('show');
+    }
+  }, delay);
+}
+
+function showButtonTemporarily() {
+  if (!button) return;
+  button.classList.add('show');
+  if (dragging) return;
+  if (!isHovering) {
+    startHideTimer(1500);
+  } else {
+    clearTimeout(scrollTimer);
+  }
+}
+
+function setupScrollListener() {
+  let ticking = false;
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      window.requestAnimationFrame(() => {
+        showButtonTemporarily();
+        ticking = false;
+      });
+      ticking = true;
+    }
+  }, { passive: true });
+}
+
+function createButton() {
+  if (button) return;
+  const tocEl = document.querySelector('.table-of-contents');
+  if (!tocEl) return;
+
+  button = document.createElement('button');
+  button.className = 'toc-mobile-btn';
+  button.setAttribute('aria-label', '目录');
+  button.setAttribute('title', '显示目录');
+  button.innerHTML = LIST_ICON;
+  button.addEventListener('click', () => {
+    isHovering = false;
+    clearTimeout(scrollTimer);
+    if (button) button.classList.remove('show');
+    openDrawer();
+  });
+
+  button.addEventListener('mouseenter', () => {
+    isHovering = true;
+    button.classList.add('show');
+    clearTimeout(scrollTimer);
+  });
+  button.addEventListener('mouseleave', () => {
+    if (dragging) return;
+    isHovering = false;
+    if (!drawer) {
+      startHideTimer(500);
+    }
+  });
+
+  const onDragStart = (e) => {
+    e.preventDefault();
+    dragging = true;
+    hasMoved = false;
+
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    startY = clientY;
+    startBottom = parseInt(window.getComputedStyle(button).bottom, 10) || 140;
+
+    button.style.transition = 'none';
+    isHovering = false;
+    clearTimeout(scrollTimer);
+
+    window.addEventListener('mousemove', onDragMove);
+    window.addEventListener('mouseup', onDragEnd);
+    window.addEventListener('touchmove', onDragMove, { passive: false });
+    window.addEventListener('touchend', onDragEnd);
+  };
+
+  const onDragMove = (e) => {
+    if (!dragging) return;
+    e.preventDefault();
+
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    const deltaY = startY - clientY;
+    let newBottom = startBottom + deltaY;
+
+    const maxBottom = window.innerHeight - button.offsetHeight - 20;
+    const minBottom = 60;
+    newBottom = Math.min(Math.max(newBottom, minBottom), maxBottom);
+
+    // 只有实际移动超过 3px 才算有效拖动（避免误触 click）
+    if (Math.abs(newBottom - startBottom) > 3) {
+      hasMoved = true;
+    }
+
+    button.style.bottom = newBottom + 'px';
+  };
+
+  const onDragEnd = (e) => {
+    if (!dragging) return;
+    dragging = false;
+
+    button.style.transition = '';
+
+    window.removeEventListener('mousemove', onDragMove);
+    window.removeEventListener('mouseup', onDragEnd);
+    window.removeEventListener('touchmove', onDragMove);
+    window.removeEventListener('touchend', onDragEnd);
+
+    // 如果发生了拖动，阻止后续 click 事件打开抽屉
+    if (hasMoved) {
+      const preventClick = (evt) => {
+        evt.stopPropagation();
+        evt.preventDefault();
+        button.removeEventListener('click', preventClick, true);
+      };
+      button.addEventListener('click', preventClick, true);
+      // 在下一轮事件循环后移除临时监听，避免影响正常点击
+      setTimeout(() => {
+        button.removeEventListener('click', preventClick, true);
+      }, 0);
+    }
+
+    // 重置悬停状态，并启动缩回计时器
+    isHovering = false;
+    clearTimeout(scrollTimer);
+    startHideTimer(500);
+  };
+
+  button.addEventListener('mousedown', onDragStart);
+  button.addEventListener('touchstart', onDragStart, { passive: false });
+
+  document.body.appendChild(button);
+
+  const clampButtonPosition = () => {
+    if (!button) return;
+    const currentBottom = parseInt(button.style.bottom, 10);
+    // 若当前未通过拖拽设置过 bottom（仍使用 CSS 默认值），则从计算样式读取
+    const actualBottom = Number.isNaN(currentBottom)
+      ? parseInt(window.getComputedStyle(button).bottom, 10) || 140
+      : currentBottom;
+
+    const maxBottom = window.innerHeight - button.offsetHeight - 20;
+    const minBottom = 60;
+    const clampedBottom = Math.min(Math.max(actualBottom, minBottom), maxBottom);
+
+    button.style.bottom = `${clampedBottom}px`;
+  };
+
+  // 初次加载时立即限制一次位置（处理小窗口场景）
+  clampButtonPosition();
+
+  // 监听窗口大小变化
+  window.addEventListener('resize', clampButtonPosition);
+
+  // 清理监听器（当按钮被移除时）
+  const originalRemoveButton = removeButton;
+  removeButton = () => {
+    window.removeEventListener('resize', clampButtonPosition);
+    originalRemoveButton();
+  };
+
+  setupScrollListener();
+  showButtonTemporarily();
+}
+
+function removeButton() {
+  if (button) {
+    button.remove();
+    button = null;
+  }
+  closeDrawer();
+  isHovering = false;
+  clearTimeout(scrollTimer);
+}
+
+function openDrawer() {
+  if (drawer) return;
+  const tocEl = document.querySelector('.table-of-contents');
+  if (!tocEl) return;
+
+  backdrop = document.createElement('div');
+  backdrop.className = 'toc-mobile-backdrop';
+  backdrop.addEventListener('click', closeDrawer);
+  document.body.appendChild(backdrop);
+
+  drawer = document.createElement('div');
+  drawer.className = 'toc-mobile-drawer';
+  drawer.innerHTML = `
+    <button class="toc-mobile-drawer-close" aria-label="关闭" title="关闭">&times;</button>
+    <div class="toc-mobile-drawer-content"></div>
+  `;
+  drawer.querySelector('.toc-mobile-drawer-close').addEventListener('click', closeDrawer);
+  drawer.querySelector('.toc-mobile-drawer-content').appendChild(tocEl.cloneNode(true));
+  document.body.appendChild(drawer);
+
+  void drawer.offsetHeight;
+  void backdrop.offsetHeight;
+
+  document.body.style.overflow = 'hidden';
+
+  backdrop.classList.add('active');
+  drawer.classList.add('open');
+
+  const drawerContent = drawer.querySelector('.toc-mobile-drawer-content');
+  const handleWheel = (e) => {
+    const { scrollTop, scrollHeight, clientHeight } = drawerContent;
+    const isAtTop = scrollTop <= 0;
+    const isAtBottom = scrollTop + clientHeight >= scrollHeight - 1;
+    // 顶部向上滚动 / 底部向下滚动 避免背景页滚动
+    if ((isAtTop && e.deltaY < 0) || (isAtBottom && e.deltaY > 0)) {
+      e.preventDefault();
+    }
+  };
+  drawerContent.addEventListener('wheel', handleWheel, { passive: false });
+  // 保存引用，便于关闭时移除
+  drawer._handleWheel = handleWheel;
+
+  drawer.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => setTimeout(closeDrawer, 100));
+  });
+}
+
+function closeDrawer() {
+  if (!drawer && !backdrop) return;
+
+  if (backdrop) backdrop.classList.remove('active');
+  if (drawer) drawer.classList.remove('open');
+
+  const cleanup = () => {
+    document.body.style.overflow = '';
+    if (drawer) {
+      drawer.removeEventListener('transitionend', cleanup);
+      drawer.remove();
+      drawer = null;
+    }
+    if (backdrop) {
+      backdrop.remove();
+      backdrop = null;
+    }
+    if (drawer && drawer._handleWheel) {
+      const content = drawer.querySelector('.toc-mobile-drawer-content');
+      if (content) content.removeEventListener('wheel', drawer._handleWheel);
+    }
+  };
+
+  if (drawer) {
+    drawer.addEventListener('transitionend', cleanup, { once: true });
+    setTimeout(() => {
+      if (drawer || backdrop) cleanup();
+    }, 500);
+  } else {
+    cleanup();
+  }
+}
+
+function refresh() {
+  if (!mediaQuery) return;
+  const hasToc = !!document.querySelector('.table-of-contents');
+  if (mediaQuery.matches && hasToc) {
+    createButton();
+  } else {
+    removeButton();
+  }
+}
+
+function startObserver() {
+  if (observer) return;
+  observer = new MutationObserver((mutations) => {
+    let tocAdded = false;
+    let tocRemoved = false;
+
+    for (const mutation of mutations) {
+      for (const node of mutation.addedNodes) {
+        if (node.nodeType === 1) {
+          if (node.matches?.('.table-of-contents') || node.querySelector?.('.table-of-contents')) {
+            tocAdded = true;
+            break;
+          }
+        }
+      }
+      if (tocAdded) break;
+      for (const node of mutation.removedNodes) {
+        if (node.nodeType === 1) {
+          if (node.matches?.('.table-of-contents') || node.querySelector?.('.table-of-contents')) {
+            tocRemoved = true;
+            break;
+          }
+        }
+      }
+      if (tocRemoved) break;
+    }
+
+    if (tocAdded) refresh();
+    if (tocRemoved) refresh();
+  });
+
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true,
+  });
+}
+
+export function onRouteUpdate() {
+  if (!ExecutionEnvironment.canUseDOM) return;
+  injectStylesOnce();
+
+  if (!mediaQuery) {
+    mediaQuery = window.matchMedia('(max-width: 996px)');
+    mediaQuery.addEventListener('change', refresh);
+  }
+
+  startObserver();
+  refresh();
+}

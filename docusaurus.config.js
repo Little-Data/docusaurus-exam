@@ -7,6 +7,7 @@
 import {themes as prismThemes} from 'prism-react-renderer';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
+import remarkTocHeading from './plugins/remark-toc-heading/index.js';
 
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
@@ -46,6 +47,7 @@ const config = {
   plugins: [
     './plugins/image-viewer',
     './plugins/quiz-plugin',
+    './plugins/toc-mobile'
   ],
 
   presets: [
@@ -67,7 +69,7 @@ const config = {
           onUntruncatedBlogPosts: 'ignore',
           blogSidebarCount: 0,
           showLastUpdateTime: true,
-          remarkPlugins: [remarkMath],
+          remarkPlugins: [remarkMath, remarkTocHeading],
           rehypePlugins: [[rehypeKatex, { strict: false }]],
         },
         theme: {
