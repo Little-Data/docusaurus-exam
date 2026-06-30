@@ -19,6 +19,7 @@ const STYLES = `
   padding-left: 6px;
   cursor: pointer;
   transition: right 0.3s ease, opacity 0.3s;
+  touch-action: none;
 }
 .toc-mobile-btn.show {
   right: 0;
@@ -47,7 +48,7 @@ const STYLES = `
   position: fixed;
   top: 0;
   right: 0;
-  width: 85vw;
+  width: 60vw;
   max-width: 340px;
   height: 100vh;
   background-color: #ffffff;
@@ -184,7 +185,11 @@ function createButton() {
   });
 
   const onDragStart = (e) => {
-    e.preventDefault();
+    // 桌面端阻止默认行为，但保留 click
+    if (e.type === 'mousedown') {
+      e.preventDefault();
+    }
+    // 触摸事件不调用 preventDefault，保证后续 click 可触发
     dragging = true;
     hasMoved = false;
 
@@ -200,6 +205,7 @@ function createButton() {
     window.addEventListener('mouseup', onDragEnd);
     window.addEventListener('touchmove', onDragMove, { passive: false });
     window.addEventListener('touchend', onDragEnd);
+    window.addEventListener('touchcancel', onDragEnd);
   };
 
   const onDragMove = (e) => {
@@ -232,6 +238,7 @@ function createButton() {
     window.removeEventListener('mouseup', onDragEnd);
     window.removeEventListener('touchmove', onDragMove);
     window.removeEventListener('touchend', onDragEnd);
+    window.removeEventListener('touchcancel', onDragEnd);
 
     // 如果发生了拖动，阻止后续 click 事件打开抽屉
     if (hasMoved) {
@@ -308,6 +315,8 @@ function openDrawer() {
   backdrop = document.createElement('div');
   backdrop.className = 'toc-mobile-backdrop';
   backdrop.addEventListener('click', closeDrawer);
+  // 阻止背景上的触摸滚动
+  backdrop.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
   document.body.appendChild(backdrop);
 
   drawer = document.createElement('div');
@@ -339,8 +348,28 @@ function openDrawer() {
     }
   };
   drawerContent.addEventListener('wheel', handleWheel, { passive: false });
-  // 保存引用，便于关闭时移除
+
+  // 触摸滚动穿透处理：模拟原生滚动边界
+  const handleTouchMove = (e) => {
+    const { scrollTop, scrollHeight, clientHeight } = drawerContent;
+    const isAtTop = scrollTop <= 0;
+    const isAtBottom = scrollTop + clientHeight >= scrollHeight - 1;
+    // 仅当滚动到顶部且继续向下滑动，或滚动到底部且继续向上滑动时阻止默认行为
+    if ((isAtTop && e.touches[0].clientY > (drawer._lastTouchY || 0)) ||
+        (isAtBottom && e.touches[0].clientY < (drawer._lastTouchY || 0))) {
+      e.preventDefault();
+    }
+    drawer._lastTouchY = e.touches[0].clientY;
+  };
+  // 记录初始触摸 Y 坐标以判断方向
+  drawerContent.addEventListener('touchstart', (e) => {
+    drawer._lastTouchY = e.touches[0].clientY;
+  }, { passive: true });
+  drawerContent.addEventListener('touchmove', handleTouchMove, { passive: false });
+
+  // 保存清理引用
   drawer._handleWheel = handleWheel;
+  drawer._handleTouchMove = handleTouchMove;
 
   drawer.querySelectorAll('a').forEach(link => {
     link.addEventListener('click', () => setTimeout(closeDrawer, 100));
@@ -357,16 +386,20 @@ function closeDrawer() {
     document.body.style.overflow = '';
     if (drawer) {
       drawer.removeEventListener('transitionend', cleanup);
+      if (drawer._handleWheel) {
+        const content = drawer.querySelector('.toc-mobile-drawer-content');
+        if (content) content.removeEventListener('wheel', drawer._handleWheel);
+      }
+      if (drawer._handleTouchMove) {
+        const content = drawer.querySelector('.toc-mobile-drawer-content');
+        if (content) content.removeEventListener('touchmove', drawer._handleTouchMove);
+      }
       drawer.remove();
       drawer = null;
     }
     if (backdrop) {
       backdrop.remove();
       backdrop = null;
-    }
-    if (drawer && drawer._handleWheel) {
-      const content = drawer.querySelector('.toc-mobile-drawer-content');
-      if (content) content.removeEventListener('wheel', drawer._handleWheel);
     }
   };
 
