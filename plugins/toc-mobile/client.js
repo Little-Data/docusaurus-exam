@@ -50,7 +50,7 @@ const STYLES = `
   right: 0;
   width: 60vw;
   max-width: 340px;
-  height: 100vh;
+  height: 90vh;
   background-color: #ffffff;
   color: var(--ifm-font-color-base);
   opacity: 1;
@@ -66,6 +66,7 @@ const STYLES = `
 }
 .toc-mobile-drawer.open {
   transform: translateX(0);
+  border-radius:10px 0 0 10px;
 }
 
 .toc-mobile-drawer-close {
