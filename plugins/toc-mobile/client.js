@@ -157,8 +157,10 @@ function setupScrollListener() {
 
 function createButton() {
   if (button) return;
+  // 有目录或有折叠按钮都视为目录存在
   const tocEl = document.querySelector('.table-of-contents');
-  if (!tocEl) return;
+  const collapsibleBtn = document.querySelector('button.clean-btn.tocCollapsibleButton_TO0P');
+  if (!tocEl && !collapsibleBtn) return;
 
   button = document.createElement('button');
   button.className = 'toc-mobile-btn';
@@ -308,10 +310,33 @@ function removeButton() {
   clearTimeout(scrollTimer);
 }
 
-function openDrawer() {
+async function openDrawer() {
   if (drawer) return;
+
+  // 检测是否存在折叠目录按钮，先展开以获取完整内容
+  const collapsibleBtn = document.querySelector('button.clean-btn.tocCollapsibleButton_TO0P');
+  if (collapsibleBtn) {
+    collapsibleBtn.click();
+    // 等待 React 渲染出目录
+    await new Promise(resolve => {
+      const check = () => {
+        if (document.querySelector('.table-of-contents')) {
+          resolve();
+        } else {
+          setTimeout(check, 50);
+        }
+      };
+      check();
+      setTimeout(resolve, 1000);
+    });
+  }
+
   const tocEl = document.querySelector('.table-of-contents');
-  if (!tocEl) return;
+  if (!tocEl) {
+    // 如果仍然没有目录，恢复折叠状态
+    if (collapsibleBtn) collapsibleBtn.click();
+    return;
+  }
 
   backdrop = document.createElement('div');
   backdrop.className = 'toc-mobile-backdrop';
@@ -329,6 +354,11 @@ function openDrawer() {
   drawer.querySelector('.toc-mobile-drawer-close').addEventListener('click', closeDrawer);
   drawer.querySelector('.toc-mobile-drawer-content').appendChild(tocEl.cloneNode(true));
   document.body.appendChild(drawer);
+
+  // 克隆完目录后恢复折叠
+  if (collapsibleBtn) {
+    collapsibleBtn.click();
+  }
 
   void drawer.offsetHeight;
   void backdrop.offsetHeight;
@@ -416,7 +446,8 @@ function closeDrawer() {
 
 function refresh() {
   if (!mediaQuery) return;
-  const hasToc = !!document.querySelector('.table-of-contents');
+  const hasToc = !!document.querySelector('.table-of-contents')
+    || !!document.querySelector('button.clean-btn.tocCollapsibleButton_TO0P');
   if (mediaQuery.matches && hasToc) {
     createButton();
   } else {
@@ -433,16 +464,28 @@ function startObserver() {
     for (const mutation of mutations) {
       for (const node of mutation.addedNodes) {
         if (node.nodeType === 1) {
-          if (node.matches?.('.table-of-contents') || node.querySelector?.('.table-of-contents')) {
+          // 检测目录容器或折叠按钮的出现
+          if (
+            node.matches?.('.table-of-contents') ||
+            node.querySelector?.('.table-of-contents') ||
+            node.matches?.('button.clean-btn.tocCollapsibleButton_TO0P') ||
+            node.querySelector?.('button.clean-btn.tocCollapsibleButton_TO0P')
+          ) {
             tocAdded = true;
             break;
           }
         }
       }
       if (tocAdded) break;
+
       for (const node of mutation.removedNodes) {
         if (node.nodeType === 1) {
-          if (node.matches?.('.table-of-contents') || node.querySelector?.('.table-of-contents')) {
+          if (
+            node.matches?.('.table-of-contents') ||
+            node.querySelector?.('.table-of-contents') ||
+            node.matches?.('button.clean-btn.tocCollapsibleButton_TO0P') ||
+            node.querySelector?.('button.clean-btn.tocCollapsibleButton_TO0P')
+          ) {
             tocRemoved = true;
             break;
           }
@@ -451,8 +494,9 @@ function startObserver() {
       if (tocRemoved) break;
     }
 
-    if (tocAdded) refresh();
-    if (tocRemoved) refresh();
+    if (tocAdded || tocRemoved) {
+      refresh();
+    }
   });
 
   observer.observe(document.body, {
