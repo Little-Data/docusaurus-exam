@@ -5,11 +5,32 @@ import Wenben from '@theme/Wenben';
 import { QuizContext } from '../QuizContext';
 import styles from './styles.module.css';
 
+// 递归提取 React children 中的纯文本
+function extractText(children) {
+  if (!children || typeof children === 'boolean') return '';
+  if (typeof children === 'string' || typeof children === 'number') return String(children);
+  if (Array.isArray(children)) return children.map(extractText).join('');
+  if (children.props?.children) return extractText(children.props.children);
+  return '';
+}
+
+// 快速哈希，生成短标识
+function shortHash(str) {
+  let h = 0;
+  for (let i = 0; i < str.length; i++) {
+    h = ((h << 5) - h) + str.charCodeAt(i);
+    h |= 0;
+  }
+  return Math.abs(h).toString(36);
+}
+
 function getWorkitemKey(child) {
   const items = React.Children.toArray(child.props.children);
   const wenben = items.find(c => c.type === Wenben);
-  const content = wenben ? String(wenben.props.children) : '';
-  return `workitem-${content.length}-${content.slice(0, 50).replace(/\s+/g, '')}`;
+  const content = wenben ? extractText(wenben.props.children) : '';
+  const preview = content.replace(/\s+/g, '').slice(0, 50);
+  const hash = shortHash(content);
+  return `workitem-${content.length}-${preview}_${hash}`;
 }
 
 export default function Workpaper({ children }) {

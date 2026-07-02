@@ -6,12 +6,33 @@ import Ansinput from '@theme/Ansinput';
 import { QuizContext } from '../QuizContext';
 import styles from './styles.module.css';
 
+// 递归提取 React children 中的纯文本
+function extractText(children) {
+  if (!children || typeof children === 'boolean') return '';
+  if (typeof children === 'string' || typeof children === 'number') return String(children);
+  if (Array.isArray(children)) return children.map(extractText).join('');
+  if (children.props?.children) return extractText(children.props.children);
+  return '';
+}
+
+// 快速哈希，生成短标识
+function shortHash(str) {
+  let h = 0;
+  for (let i = 0; i < str.length; i++) {
+    h = ((h << 5) - h) + str.charCodeAt(i);
+    h |= 0;
+  }
+  return Math.abs(h).toString(36);
+}
+
 // 会话存储持久化工具函数
 function getQuizStorageKey(pageContent) {
   if (typeof window === 'undefined') return '';
-  const path = window.location.pathname;
-  const content = String(pageContent).slice(0, 80).replace(/\s+/g, '_');
-  return `quiz:${path}:${content}`;
+  const path = window.location.pathname.replace(/[^a-zA-Z0-9_\/-]/g, '_');
+  const full = extractText(pageContent).replace(/\s+/g, '');
+  const text = full.slice(0, 60);
+  const hash = shortHash(full);
+  return `quiz:${path}:${text}_${hash}`;
 }
 
 function persistQuizState(key, state) {
@@ -501,7 +522,6 @@ function FillQuestion({ question, hasAnsinput, hasKaTeX, jiexiContent, jiexiShou
 
   const previewContainerRef = useRef(null);
   const answerContainerRef = useRef(null);
-  const pendingRenderRef = useRef(false);
 
   const [errorExpanded, setErrorExpanded] = useState(true);
   const errorContentRef = useRef(null);
@@ -675,7 +695,6 @@ function FillQuestion({ question, hasAnsinput, hasKaTeX, jiexiContent, jiexiShou
     setSubmittedDisplayMode('rendered');
     dispatch({ type: 'SUBMIT' });
     setPreviewOpen(false);
-    pendingRenderRef.current = true;
   }, [state.inputValue, hasContent]);
 
   const handleReset = useCallback(() => {
@@ -685,7 +704,6 @@ function FillQuestion({ question, hasAnsinput, hasKaTeX, jiexiContent, jiexiShou
     setSubmittedAnswerRaw('');
     setSubmittedDisplayMode('rendered');
     if (previewContainerRef.current) previewContainerRef.current.innerHTML = '';
-    pendingRenderRef.current = false;
   }, []);
 
   const toggleDisplayMode = useCallback(() => {
@@ -693,31 +711,45 @@ function FillQuestion({ question, hasAnsinput, hasKaTeX, jiexiContent, jiexiShou
       const newMode = prev === 'rendered' ? 'raw' : 'rendered';
       return newMode;
     });
-    pendingRenderRef.current = true;
+  }, []);
+
+  // 渲染提交的答案到 DOM
+  const renderSubmittedAnswer = useCallback((answerText) => {
+    const node = answerContainerRef.current;
+    if (!node) return;
+    if (isKaTeXMode && submittedDisplayMode === 'rendered') {
+      renderMixedContent(answerText, node, () => {});
+    } else {
+      node.innerHTML = '';
+      const pre = document.createElement('pre');
+      pre.style.whiteSpace = 'pre-wrap';
+      pre.style.margin = '0';
+      pre.style.fontFamily = 'inherit';
+      pre.style.padding = '0.5rem';
+      pre.style.background = 'var(--ifm-color-emphasis-100)';
+      pre.style.borderRadius = 'var(--ifm-card-border-radius)';
+      pre.innerText = answerText;
+      node.appendChild(pre);
+    }
+  }, [isKaTeXMode, submittedDisplayMode, renderMixedContent]);
+
+  // 初始提交／切换显示模式／刷新恢复后渲染答案
+  useEffect(() => {
+    if (submittedAnswerRaw) {
+      renderSubmittedAnswer(submittedAnswerRaw);
+    }
+  }, [submittedAnswerRaw, submittedDisplayMode, renderSubmittedAnswer]);
+
+  // 页面刷新时从 sessionStorage 恢复 submittedAnswerRaw
+  useEffect(() => {
+    if (state.userLocked && !submittedAnswerRaw && state.inputValue) {
+      setSubmittedAnswerRaw(state.inputValue);
+    }
   }, []);
 
   const setAnswerRef = useCallback((node) => {
     answerContainerRef.current = node;
-    if (node && pendingRenderRef.current && state.userLocked && submittedAnswerRaw) {
-      if (isKaTeXMode && submittedDisplayMode === 'rendered') {
-        // KaTeX 模式且需要渲染公式
-        renderMixedContent(submittedAnswerRaw, node, () => {});
-      } else {
-        // 非 KaTeX 模式，或 KaTeX 模式但选择了“显示原文”：纯文本显示
-        node.innerHTML = '';
-        const pre = document.createElement('pre');
-        pre.style.whiteSpace = 'pre-wrap';
-        pre.style.margin = '0';
-        pre.style.fontFamily = 'inherit';
-        pre.style.padding = '0.5rem';
-        pre.style.background = 'var(--ifm-color-emphasis-100)';
-        pre.style.borderRadius = 'var(--ifm-card-border-radius)';
-        pre.innerText = submittedAnswerRaw;
-        node.appendChild(pre);
-      }
-      pendingRenderRef.current = false;
-    }
-  }, [state.userLocked, submittedAnswerRaw, submittedDisplayMode, isKaTeXMode, renderMixedContent]);
+  }, []);
 
   const isFillFirstMount = useRef(true);
   const isFillSystemUpdate = useRef(false);
