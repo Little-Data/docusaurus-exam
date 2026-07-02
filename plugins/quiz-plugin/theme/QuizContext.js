@@ -5,4 +5,8 @@ export const QuizContext = createContext({
   showJiexiDirectly: false,
   forceExpandAllState: false,
   setForceExpandAllState: () => {},
+  resetAllSignal: 0,
+  triggerResetAll: () => {},
+  registerWorkitem: () => {},
+  unregisterWorkitem: () => {},
 });

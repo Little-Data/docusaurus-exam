@@ -1,7 +1,16 @@
 import React, { useState, useCallback, useLayoutEffect, useRef, useMemo } from 'react';
 import Workpapersettings from '@theme/Workpapersettings';
+import Workitem from '@theme/Workitem';
+import Wenben from '@theme/Wenben';
 import { QuizContext } from '../QuizContext';
 import styles from './styles.module.css';
+
+function getWorkitemKey(child) {
+  const items = React.Children.toArray(child.props.children);
+  const wenben = items.find(c => c.type === Wenben);
+  const content = wenben ? String(wenben.props.children) : '';
+  return `workitem-${content.length}-${content.slice(0, 50).replace(/\s+/g, '')}`;
+}
 
 export default function Workpaper({ children }) {
   const initialSettings = useMemo(() => {
@@ -68,14 +77,47 @@ export default function Workpaper({ children }) {
     }));
   }, []);
 
+  // 重置所有答题状态
+  const [resetAllSignal, setResetAllSignal] = useState(0);
+  const triggerResetAll = useCallback(() => {
+    setResetAllSignal(s => s + 1);
+  }, []);
+
+  // 追踪每个 Workitem 是否有已答题内容
+  const [hasAnyActive, setHasAnyActive] = useState(false);
+  const activeRefs = useRef({});
+
+  const registerWorkitem = useCallback((id, isActiveRef) => {
+    activeRefs.current[id] = isActiveRef;
+    const hasActive = Object.values(activeRefs.current).some(r => r.current);
+    setHasAnyActive(hasActive);
+  }, []);
+
+  const unregisterWorkitem = useCallback((id) => {
+    delete activeRefs.current[id];
+    const hasActive = Object.values(activeRefs.current).some(r => r.current);
+    setHasAnyActive(hasActive);
+  }, []);
+
+  // 供子组件通知活跃状态变化
+  const notifyActiveChange = useCallback(() => {
+    const hasActive = Object.values(activeRefs.current).some(r => r.current);
+    setHasAnyActive(hasActive);
+  }, []);
+
   const contextValue = useMemo(() => ({
     showAnsDirectly,
     showJiexiDirectly,
     forceExpandAllState,
     setForceExpandAllState: (val) => setSettings(prev => ({ ...prev, forceExpandAllState: val })),
-  }), [showAnsDirectly, showJiexiDirectly, forceExpandAllState]);
+    resetAllSignal,
+    triggerResetAll,
+    registerWorkitem,
+    unregisterWorkitem,
+    notifyActiveChange,
+  }), [showAnsDirectly, showJiexiDirectly, forceExpandAllState, resetAllSignal, triggerResetAll, registerWorkitem, unregisterWorkitem, notifyActiveChange]);
 
-  const modifiedChildren = React.Children.map(children, child => {
+  const modifiedChildren = React.Children.map(children, (child, index) => {
     if (child.type === Workpapersettings) {
       return React.cloneElement(child, {
         showAnsDirectly,
@@ -84,7 +126,13 @@ export default function Workpaper({ children }) {
         onAnsChange: handleAnsChange,
         onJiexiChange: handleJiexiChange,
         toggleForceExpandAll,
+        hasAnyActiveContent: hasAnyActive,
+        onResetAll: triggerResetAll,
       });
+    }
+    if (child.type === Workitem) {
+      const key = getWorkitemKey(child);
+      return React.cloneElement(child, { key });
     }
     return child;
   });

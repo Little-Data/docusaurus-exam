@@ -7,6 +7,8 @@ export default function Workpapersettings({
   onAnsChange,
   onJiexiChange,
   toggleForceExpandAll,
+  hasAnyActiveContent,
+  onResetAll,
 }) {
   const [internalAns, setInternalAns] = useState(showAnsDirectly);
   const [internalJiexi, setInternalJiexi] = useState(showJiexiDirectly);
@@ -77,6 +79,14 @@ export default function Workpapersettings({
           autoComplete="off"
         >
           展开/收起解析
+        </button>
+        <button
+          className={styles.resetAllBtn}
+          onClick={onResetAll}
+          disabled={showAnsDirectly || !hasAnyActiveContent}
+          autoComplete="off"
+        >
+          重置所有
         </button>
       </div>
     </div>

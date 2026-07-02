@@ -6,6 +6,49 @@ import Ansinput from '@theme/Ansinput';
 import { QuizContext } from '../QuizContext';
 import styles from './styles.module.css';
 
+// 会话存储持久化工具函数
+function getQuizStorageKey(pageContent) {
+  if (typeof window === 'undefined') return '';
+  const path = window.location.pathname;
+  const content = String(pageContent).slice(0, 80).replace(/\s+/g, '_');
+  return `quiz:${path}:${content}`;
+}
+
+function persistQuizState(key, state) {
+  if (!key) return;
+  try {
+    const data = {};
+    ['userSelected', 'userLocked', 'redoCount', 'inputValue'].forEach(f => {
+      if (f in state) {
+        const val = state[f];
+        data[f] = val instanceof Set ? [...val] : val;
+      }
+    });
+    sessionStorage.setItem(key, JSON.stringify(data));
+  } catch {}
+}
+
+function restoreQuizState(key, defaultState) {
+  if (!key) return defaultState;
+  try {
+    const raw = sessionStorage.getItem(key);
+    if (!raw) return defaultState;
+    const parsed = JSON.parse(raw);
+    const restored = { ...defaultState };
+    if (parsed.userSelected !== undefined) {
+      restored.userSelected = Array.isArray(parsed.userSelected)
+        ? new Set(parsed.userSelected)
+        : parsed.userSelected;
+    }
+    if (parsed.userLocked !== undefined) restored.userLocked = parsed.userLocked;
+    if (parsed.redoCount !== undefined) restored.redoCount = parsed.redoCount;
+    if (parsed.inputValue !== undefined) restored.inputValue = parsed.inputValue;
+    return restored;
+  } catch {
+    return defaultState;
+  }
+}
+
 function debounce(func, wait) {
   let timeout;
   return function executedFunction(...args) {
@@ -143,6 +186,8 @@ function selectionReducer(state, action) {
       return { ...state, userLocked: true };
     case 'RESET':
       return { userSelected: action.payload.initialSelected, userLocked: false, redoCount: state.redoCount + 1 };
+    case 'RESET_ALL':
+      return { userSelected: action.payload.initialSelected, userLocked: false, redoCount: state.redoCount };
     case 'FORCE_SHOW_ANS':
       return { userSelected: action.payload.selected, userLocked: true, redoCount: 0 };
     case 'CLEAR_FORCE':
@@ -152,8 +197,12 @@ function selectionReducer(state, action) {
   }
 }
 
+let _selectionId = 0;
+function nextSelectionId() { return ++_selectionId; }
+
 function SelectionQuestion({ question, options, jiexiContent, jiexiShouqi }) {
-  const { showAnsDirectly, showJiexiDirectly, forceExpandAllState } = useContext(QuizContext);
+  const { showAnsDirectly, showJiexiDirectly, forceExpandAllState, resetAllSignal, registerWorkitem, unregisterWorkitem, notifyActiveChange } = useContext(QuizContext);
+  const itemId = useRef(`sel_${nextSelectionId()}`).current;
   const isMultiple = options.filter(o => o.isAnswer).length > 1;
   const correctAnswers = useMemo(
     () => options.map((o, idx) => (o.isAnswer ? idx : -1)).filter(i => i !== -1),
@@ -164,14 +213,40 @@ function SelectionQuestion({ question, options, jiexiContent, jiexiShouqi }) {
     return isMultiple ? new Set() : null;
   }, [isMultiple]);
 
-  const [state, dispatch] = useReducer(selectionReducer, {
-    userSelected: initialSelected,
-    userLocked: false,
-    redoCount: 0,
-  });
+  const storageKey = useMemo(() => getQuizStorageKey(question), [question]);
 
-  // 使用 useLayoutEffect 同步更新，避免闪烁
+  const [state, dispatch] = useReducer(selectionReducer, null, () =>
+    restoreQuizState(storageKey, {
+      userSelected: initialSelected,
+      userLocked: false,
+      redoCount: 0,
+    })
+  );
+
+  // 标记是否首次挂载，避免初次挂载时 CLEAR_FORCE 清除恢复的答案
+  const isFirstMount = useRef(true);
+  const isSystemUpdate = useRef(false);
+  const prevShowAnsRef = useRef(showAnsDirectly);
+
   useLayoutEffect(() => {
+    if (isFirstMount.current) {
+      isFirstMount.current = false;
+      prevShowAnsRef.current = showAnsDirectly;
+      if (showAnsDirectly) {
+        isSystemUpdate.current = true;
+        dispatch({
+          type: 'FORCE_SHOW_ANS',
+          payload: { selected: isMultiple ? new Set(correctAnswers) : correctAnswers[0] },
+        });
+      }
+      return;
+    }
+
+    // 仅当 showAnsDirectly 值真正变化时才执行，避免因依赖项引用变化误触
+    if (showAnsDirectly === prevShowAnsRef.current) return;
+    prevShowAnsRef.current = showAnsDirectly;
+
+    isSystemUpdate.current = true;
     if (showAnsDirectly) {
       const forcedSelected = isMultiple ? new Set(correctAnswers) : correctAnswers[0];
       dispatch({ type: 'FORCE_SHOW_ANS', payload: { selected: forcedSelected } });
@@ -179,6 +254,54 @@ function SelectionQuestion({ question, options, jiexiContent, jiexiShouqi }) {
       dispatch({ type: 'CLEAR_FORCE', payload: { initialSelected } });
     }
   }, [showAnsDirectly, isMultiple, correctAnswers, initialSelected]);
+
+  // 持久化用户答题状态（排除系统强制更新的场景）
+  const prevStateRef = useRef(state);
+  useEffect(() => {
+    if (isSystemUpdate.current) {
+      isSystemUpdate.current = false;
+      prevStateRef.current = state;
+      return;
+    }
+    // 检查用户状态是否真的有变化
+    const prev = prevStateRef.current;
+    if (prev.userLocked !== state.userLocked || prev.redoCount !== state.redoCount ||
+        (isMultiple ? prev.userSelected?.size !== state.userSelected?.size || 
+          [...(prev.userSelected || [])].sort().join() !== [...(state.userSelected || [])].sort().join()
+         : prev.userSelected !== state.userSelected)) {
+      persistQuizState(storageKey, {
+        userSelected: state.userSelected,
+        userLocked: state.userLocked,
+        redoCount: state.redoCount,
+      });
+    }
+    prevStateRef.current = state;
+  }, [state, storageKey, isMultiple]);
+
+  // 监听重置全部信号
+  const prevResetRef = useRef(resetAllSignal);
+  useEffect(() => {
+    if (prevResetRef.current !== resetAllSignal) {
+      prevResetRef.current = resetAllSignal;
+      isSystemUpdate.current = true;
+      const sel = isMultiple ? new Set() : null;
+      dispatch({ type: 'RESET_ALL', payload: { initialSelected: sel } });
+      try { sessionStorage.removeItem(storageKey); } catch {}
+    }
+  }, [resetAllSignal, isMultiple]);
+
+  // 注册活跃状态（是否已有答题内容）
+  const isActive = state.userLocked && !showAnsDirectly;
+  const isActiveRef = useRef(isActive);
+  isActiveRef.current = isActive;
+  useEffect(() => {
+    registerWorkitem(itemId, isActiveRef);
+    return () => unregisterWorkitem(itemId);
+  }, []);
+  // 状态变化时通知 Workpaper 更新
+  useEffect(() => {
+    notifyActiveChange();
+  }, [isActive]);
 
   const locked = showAnsDirectly || state.userLocked;
   const selected = showAnsDirectly
@@ -343,6 +466,8 @@ function fillReducer(state, action) {
       return { ...state, userLocked: true };
     case 'RESET':
       return { userLocked: false, inputValue: '', redoCount: state.redoCount + 1 };
+    case 'RESET_ALL':
+      return { userLocked: false, inputValue: '', redoCount: state.redoCount };
     case 'FORCE_SHOW_ANS':
       return { userLocked: true, inputValue: state.inputValue, redoCount: 0 };
     case 'CLEAR_FORCE':
@@ -352,14 +477,22 @@ function fillReducer(state, action) {
   }
 }
 
-function FillQuestion({ question, hasAnsinput, hasKaTeX, jiexiContent, jiexiShouqi }) {
-  const { showAnsDirectly, showJiexiDirectly, forceExpandAllState } = useContext(QuizContext);
+let _fillId = 0;
+function nextFillId() { return ++_fillId; }
 
-  const [state, dispatch] = useReducer(fillReducer, {
-    userLocked: false,
-    inputValue: '',
-    redoCount: 0,
-  });
+function FillQuestion({ question, hasAnsinput, hasKaTeX, jiexiContent, jiexiShouqi }) {
+  const { showAnsDirectly, showJiexiDirectly, forceExpandAllState, resetAllSignal, registerWorkitem, unregisterWorkitem, notifyActiveChange } = useContext(QuizContext);
+  const itemId = useRef(`fill_${nextFillId()}`).current;
+
+  const storageKey = useMemo(() => getQuizStorageKey(question), [question]);
+
+  const [state, dispatch] = useReducer(fillReducer, null, () =>
+    restoreQuizState(storageKey, {
+      userLocked: false,
+      inputValue: '',
+      redoCount: 0,
+    })
+  );
 
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewError, setPreviewError] = useState(null);
@@ -586,13 +719,69 @@ function FillQuestion({ question, hasAnsinput, hasKaTeX, jiexiContent, jiexiShou
     }
   }, [state.userLocked, submittedAnswerRaw, submittedDisplayMode, isKaTeXMode, renderMixedContent]);
 
+  const isFillFirstMount = useRef(true);
+  const isFillSystemUpdate = useRef(false);
+
   useLayoutEffect(() => {
+    if (isFillFirstMount.current) {
+      isFillFirstMount.current = false;
+      if (showAnsDirectly) {
+        isFillSystemUpdate.current = true;
+        dispatch({ type: 'FORCE_SHOW_ANS' });
+      }
+      return;
+    }
+
+    isFillSystemUpdate.current = true;
     if (showAnsDirectly) {
       dispatch({ type: 'FORCE_SHOW_ANS' });
     } else {
       dispatch({ type: 'CLEAR_FORCE' });
     }
   }, [showAnsDirectly]);
+
+  const prevFillStateRef = useRef(state);
+  useEffect(() => {
+    if (isFillSystemUpdate.current) {
+      isFillSystemUpdate.current = false;
+      prevFillStateRef.current = state;
+      return;
+    }
+    const prev = prevFillStateRef.current;
+    if (prev.userLocked !== state.userLocked || prev.redoCount !== state.redoCount ||
+        prev.inputValue !== state.inputValue) {
+      persistQuizState(storageKey, {
+        userLocked: state.userLocked,
+        inputValue: state.inputValue,
+        redoCount: state.redoCount,
+      });
+    }
+    prevFillStateRef.current = state;
+  }, [state, storageKey]);
+
+  // 监听重置全部信号
+  const fillPrevResetRef = useRef(resetAllSignal);
+  useEffect(() => {
+    if (fillPrevResetRef.current !== resetAllSignal) {
+      fillPrevResetRef.current = resetAllSignal;
+      isFillSystemUpdate.current = true;
+      dispatch({ type: 'RESET_ALL' });
+      try { sessionStorage.removeItem(storageKey); } catch {}
+    }
+  }, [resetAllSignal]);
+
+  // 注册活跃状态（是否已有答题内容）
+  const fillIsActive = !showAnsDirectly && state.inputValue.trim().length > 0;
+  const fillActiveRef = useRef(fillIsActive);
+  fillActiveRef.current = fillIsActive;
+  useEffect(() => {
+    registerWorkitem(itemId, fillActiveRef);
+    return () => unregisterWorkitem(itemId);
+  }, []);
+  // 状态变化时通知 Workpaper 更新
+  useEffect(() => {
+    notifyActiveChange();
+  }, [fillIsActive]);
 
   if (!locked) {
     return (

@@ -34,6 +34,9 @@
 
 .controlRow {
   margin-top: 0.8rem;
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
 .toggleAllBtn {
@@ -52,6 +55,26 @@
 }
 
 .toggleAllBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.resetAllBtn {
+  padding: 0.3rem 0.8rem;
+  border: 1px solid var(--ifm-color-danger);
+  border-radius: var(--ifm-card-border-radius);
+  background: var(--ifm-background-color);
+  color: var(--ifm-color-danger);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.85rem;
+}
+
+.resetAllBtn:hover:not(:disabled) {
+  background: var(--ifm-color-danger-lightest);
+}
+
+.resetAllBtn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
