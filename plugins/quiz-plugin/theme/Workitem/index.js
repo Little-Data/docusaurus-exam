@@ -213,6 +213,8 @@ function selectionReducer(state, action) {
       return { userSelected: action.payload.selected, userLocked: true, redoCount: 0 };
     case 'CLEAR_FORCE':
       return { userSelected: action.payload.initialSelected, userLocked: false, redoCount: 0 };
+    case 'RESTORE':
+      return { ...action.payload };
     default:
       return state;
   }
@@ -235,14 +237,13 @@ function SelectionQuestion({ question, options, jiexiContent, jiexiShouqi }) {
   }, [isMultiple]);
 
   const storageKey = useMemo(() => getQuizStorageKey(question), [question]);
+  const defaultSelectionState = useMemo(() => ({
+    userSelected: initialSelected,
+    userLocked: false,
+    redoCount: 0,
+  }), [initialSelected]);
 
-  const [state, dispatch] = useReducer(selectionReducer, null, () =>
-    restoreQuizState(storageKey, {
-      userSelected: initialSelected,
-      userLocked: false,
-      redoCount: 0,
-    })
-  );
+  const [state, dispatch] = useReducer(selectionReducer, defaultSelectionState);
 
   // 标记是否首次挂载，避免初次挂载时 CLEAR_FORCE 清除恢复的答案
   const isFirstMount = useRef(true);
@@ -310,6 +311,23 @@ function SelectionQuestion({ question, options, jiexiContent, jiexiShouqi }) {
       try { sessionStorage.removeItem(storageKey); } catch {}
     }
   }, [resetAllSignal, isMultiple]);
+
+  // 从 sessionStorage 恢复状态
+  useEffect(() => {
+    if (showAnsDirectly) return;
+    const restored = restoreQuizState(storageKey, {
+      userSelected: initialSelected,
+      userLocked: false,
+      redoCount: 0,
+    });
+    const hasSelection = isMultiple
+      ? (restored.userSelected?.size > 0)
+      : restored.userSelected !== null;
+    if (restored.userLocked || hasSelection || restored.redoCount > 0) {
+      isSystemUpdate.current = true;
+      dispatch({ type: 'RESTORE', payload: restored });
+    }
+  }, [storageKey, showAnsDirectly, isMultiple, initialSelected]);
 
   // 注册活跃状态（是否已有答题内容）
   const isActive = state.userLocked && !showAnsDirectly;
@@ -493,6 +511,8 @@ function fillReducer(state, action) {
       return { userLocked: true, inputValue: state.inputValue, redoCount: 0 };
     case 'CLEAR_FORCE':
       return { userLocked: false, inputValue: '', redoCount: 0 };
+    case 'RESTORE':
+      return { ...action.payload };
     default:
       return state;
   }
@@ -506,14 +526,9 @@ function FillQuestion({ question, hasAnsinput, hasKaTeX, jiexiContent, jiexiShou
   const itemId = useRef(`fill_${nextFillId()}`).current;
 
   const storageKey = useMemo(() => getQuizStorageKey(question), [question]);
+  const defaultFillState = useMemo(() => ({ userLocked: false, inputValue: '', redoCount: 0 }), []);
 
-  const [state, dispatch] = useReducer(fillReducer, null, () =>
-    restoreQuizState(storageKey, {
-      userLocked: false,
-      inputValue: '',
-      redoCount: 0,
-    })
-  );
+  const [state, dispatch] = useReducer(fillReducer, defaultFillState);
 
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewError, setPreviewError] = useState(null);
@@ -522,6 +537,8 @@ function FillQuestion({ question, hasAnsinput, hasKaTeX, jiexiContent, jiexiShou
 
   const previewContainerRef = useRef(null);
   const answerContainerRef = useRef(null);
+  const fillItemRef = useRef(null);
+  const textareaRef = useRef(null);
 
   const [errorExpanded, setErrorExpanded] = useState(true);
   const errorContentRef = useRef(null);
@@ -671,7 +688,6 @@ function FillQuestion({ question, hasAnsinput, hasKaTeX, jiexiContent, jiexiShou
   const locked = showAnsDirectly || state.userLocked;
   const showJiexi = showAnsDirectly || showJiexiDirectly || state.userLocked;
   const isKaTeXMode = hasKaTeX && hasAnsinput;
-  const hasContent = state.inputValue.trim().length > 0;
   const initialCollapsed = useMemo(() => {
     if (jiexiShouqi !== undefined) return jiexiShouqi;
     return false;
@@ -690,12 +706,13 @@ function FillQuestion({ question, hasAnsinput, hasKaTeX, jiexiContent, jiexiShou
   }, [locked, previewOpen, debouncedRenderPreview]);
 
   const handleSubmit = useCallback(() => {
-    if (!hasContent) return;
-    setSubmittedAnswerRaw(state.inputValue);
+    const currentValue = textareaRef.current?.value || '';
+    if (!currentValue.trim()) return;
+    setSubmittedAnswerRaw(currentValue);
     setSubmittedDisplayMode('rendered');
     dispatch({ type: 'SUBMIT' });
     setPreviewOpen(false);
-  }, [state.inputValue, hasContent]);
+  }, []);
 
   const handleReset = useCallback(() => {
     dispatch({ type: 'RESET' });
@@ -747,24 +764,38 @@ function FillQuestion({ question, hasAnsinput, hasKaTeX, jiexiContent, jiexiShou
     }
   }, []);
 
-  // 处理 SSR 水合后未调用 useReducer 初始化器的场景
-  // 浏览器 F5 刷新后，从 sessionStorage 恢复未锁定的输入状态
-  useLayoutEffect(() => {
-    try {
-      const raw = sessionStorage.getItem(storageKey);
-      if (!raw) return;
-      const parsed = JSON.parse(raw);
-      if (!state.inputValue && !state.userLocked) {
-        if (parsed.inputValue) {
-          dispatch({ type: 'SET_INPUT', payload: parsed.inputValue });
-        }
-        if (parsed.userLocked) {
-          dispatch({ type: 'SUBMIT' });
-          setSubmittedAnswerRaw(parsed.inputValue || '');
-        }
+  // 从 sessionStorage 恢复状态
+  useEffect(() => {
+    if (showAnsDirectly) return;
+    const restored = restoreQuizState(storageKey, {
+      userLocked: false,
+      inputValue: '',
+      redoCount: 0,
+    });
+    if (restored.userLocked || restored.inputValue || restored.redoCount > 0) {
+      isFillSystemUpdate.current = true;
+      dispatch({ type: 'RESTORE', payload: restored });
+      if (restored.userLocked) {
+        setSubmittedAnswerRaw(restored.inputValue || '');
       }
-    } catch {}
-  }, []);
+    }
+    // 恢复数据后同步按钮显隐
+    if (fillItemRef.current) {
+      const hasValue = !!(restored.inputValue && restored.inputValue.trim().length > 0);
+      const submitBtn = fillItemRef.current.querySelector('[data-fill-submit]');
+      const previewBtn = fillItemRef.current.querySelector('[data-fill-preview]');
+      if (submitBtn) {
+        submitBtn.style.opacity = hasValue ? '1' : '0';
+        submitBtn.style.visibility = hasValue ? 'visible' : 'hidden';
+        submitBtn.disabled = !hasValue;
+      }
+      if (previewBtn) {
+        previewBtn.style.opacity = hasValue ? '1' : '0';
+        previewBtn.style.visibility = hasValue ? 'visible' : 'hidden';
+        previewBtn.disabled = !hasValue;
+      }
+    }
+  }, [storageKey, showAnsDirectly]);
 
   const setAnswerRef = useCallback((node) => {
     answerContainerRef.current = node;
@@ -834,9 +865,39 @@ function FillQuestion({ question, hasAnsinput, hasKaTeX, jiexiContent, jiexiShou
     notifyActiveChange();
   }, [fillIsActive]);
 
+  // 原生 DOM 控制按钮显隐
+  useLayoutEffect(() => {
+    if (locked || !hasAnsinput) return;
+    if (!fillItemRef.current) return;
+    const textarea = fillItemRef.current.querySelector('textarea');
+    if (!textarea) return;
+    textareaRef.current = textarea;
+
+    const updateButtons = () => {
+      const hasValue = textarea.value.trim().length > 0;
+      const submitBtn = fillItemRef.current?.querySelector('[data-fill-submit]');
+      const previewBtn = fillItemRef.current?.querySelector('[data-fill-preview]');
+      if (submitBtn) {
+        submitBtn.style.opacity = hasValue ? '1' : '0';
+        submitBtn.style.visibility = hasValue ? 'visible' : 'hidden';
+        submitBtn.disabled = !hasValue;
+      }
+      if (previewBtn) {
+        previewBtn.style.opacity = hasValue ? '1' : '0';
+        previewBtn.style.visibility = hasValue ? 'visible' : 'hidden';
+        previewBtn.disabled = !hasValue;
+      }
+    };
+
+    updateButtons();
+
+    textarea.addEventListener('input', updateButtons);
+    return () => textarea.removeEventListener('input', updateButtons);
+  }, [locked, hasAnsinput]);
+
   if (!locked) {
     return (
-      <div className={styles.item}>
+      <div className={styles.item} ref={fillItemRef}>
         <div className={styles.question}>{question}</div>
         {hasAnsinput && (
           <div className={styles.fillArea}>
@@ -881,18 +942,20 @@ function FillQuestion({ question, hasAnsinput, hasKaTeX, jiexiContent, jiexiShou
           <div className={styles.buttonGroup}>
             {isKaTeXMode && (
               <button
-                className={`${previewOpen ? styles.refreshBtn : styles.previewBtn} ${!hasContent ? styles.hiddenBtn : ''}`}
+                data-fill-preview
+                className={previewOpen ? styles.refreshBtn : styles.previewBtn}
+                style={{ visibility: 'hidden' }}
                 onClick={openOrRefreshPreview}
-                disabled={!hasContent}
                 title={previewOpen ? "强制刷新预览" : "打开预览面板"}
               >
                 {previewOpen ? "刷新" : "预览"}
               </button>
             )}
             <button
-              className={`${styles.submitBtn} ${!hasContent ? styles.hiddenBtn : ''}`}
+              data-fill-submit
+              className={styles.submitBtn}
+              style={{ visibility: 'hidden' }}
               onClick={handleSubmit}
-              disabled={!hasContent}
             >
               确定
             </button>
