@@ -747,6 +747,25 @@ function FillQuestion({ question, hasAnsinput, hasKaTeX, jiexiContent, jiexiShou
     }
   }, []);
 
+  // 处理 SSR 水合后未调用 useReducer 初始化器的场景
+  // 浏览器 F5 刷新后，从 sessionStorage 恢复未锁定的输入状态
+  useLayoutEffect(() => {
+    try {
+      const raw = sessionStorage.getItem(storageKey);
+      if (!raw) return;
+      const parsed = JSON.parse(raw);
+      if (!state.inputValue && !state.userLocked) {
+        if (parsed.inputValue) {
+          dispatch({ type: 'SET_INPUT', payload: parsed.inputValue });
+        }
+        if (parsed.userLocked) {
+          dispatch({ type: 'SUBMIT' });
+          setSubmittedAnswerRaw(parsed.inputValue || '');
+        }
+      }
+    } catch {}
+  }, []);
+
   const setAnswerRef = useCallback((node) => {
     answerContainerRef.current = node;
   }, []);
