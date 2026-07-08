@@ -6,7 +6,7 @@ description: Linux 操作系统期末复习
 hide_table_of_contents: false
 date: 2026-07-06T18:56
 last_update:
-  date: 2026-07-08T02:03
+  date: 2026-07-08T17:40
 unlisted: false
 ---
 
@@ -1274,11 +1274,11 @@ Linux 操作系统课程期末复习。
   </Workitem>
   <Workitem tiankong>
     <Wenben>
-    16. 磁盘/端口计算：一台 Linux 服务器最大可打开 1024 个文件描述符，运行 3 个业务进程。
+    16. 一台 Linux 服务器，单进程最多开启 1024 个文件描述符，现有 3 个业务进程。
 
-    (1) 服务器最大并发连接数是多少？
+    (1) 服务器所有进程理论最大并发连接总数是多少？
 
-    (2) 如每连接占用 1 个 fd，当前已使用 1800 个 fd，剩余可用多少？
+    (2) 若每个连接占用 1 个 fd，已使用 1800 个 fd，剩余可用连接数？
     </Wenben>
     <Ansinput />
     <Jiexi>
@@ -1298,9 +1298,19 @@ Linux 操作系统课程期末复习。
     <Jiexi>8192 - 3072 = 5120MB</Jiexi>
   </Workitem>
   <Workitem tiankong>
-    <Wenben>19. mkdir -p /a/b/c/d 一次性创建了多少级目录？</Wenben>
+    <Wenben>19. 执行命令 mkdir -p /a/b/c/d，执行前系统中不存在 /a、/a/b、/a/b/c、/a/b/c/d 任意层级目录，求该命令总共创建几层目录，并列出所有新建目录层级。</Wenben>
     <Ansinput />
-    <Jiexi>a、b、c、d 共 4 级目录</Jiexi>
+    <Jiexi>
+    a、b、c、d 共 4 级目录
+    
+    第一层：/a ；
+
+    第二层：/a/b ；
+
+    第三层：/a/b/c ；
+
+    第四层：/a/b/c/d ；
+    </Jiexi>
   </Workitem>
   <Workitem tiankong>
     <Wenben>20. chmod 权限分三位组成，分别对应哪三组用户？每位数字最大取值多少？</Wenben>
@@ -1321,6 +1331,65 @@ Linux 操作系统课程期末复习。
     <Wenben>23. useradd -u 1005 testuser 中 -u 1005 表示什么？</Wenben>
     <Ansinput />
     <Jiexi>指定用户 UID（用户 ID 号）为 1005</Jiexi>
+  </Workitem>
+  <Workitem tiankong>
+    <Wenben>24. 将权限字符串 rwx r-x r-- 转换为八进制数字权限，并分段说明属主、属组、其他用户三段权限各自代表的访问控制含义。</Wenben>
+    <Ansinput />
+    <Jiexi>
+    （1）分段赋值换算规则：r=4，w=2，x=1，无权限为 0；
+
+    第一段（属主 rwx）：4+2+1=7；
+
+    第二段（属组 r-x）：4+0+1=5；
+
+    第三段（其他 r--）：4+0+0=4；
+
+    最终数字权限：754；
+
+    （2）分段含义：
+
+    第一段 rwx：文件属主拥有读、写、执行全部权限；
+
+    第二段 r-x：文件所属用户组拥有读、执行权限，无写入权限；
+
+    第三段 r--：其他所有用户仅拥有只读权限，无写、执行权限。
+
+    属主（所有者）：可读、可写、可执行；属组（组成员）：可读、可执行；其他用户：仅可读。
+    </Jiexi>
+  </Workitem>
+  <Workitem tiankong>
+    <Wenben>25. 某文件八进制数字权限为 640，请分别拆解并说明文件属主（所有者）、属组、其他用户对应的读、写、执行权限。</Wenben>
+    <Ansinput />
+    <Jiexi>
+    权限数值：r=4，w=2，x=1，0 代表无对应权限；三位数依次对应：属主、属组、其他用户。
+
+    （1）第一位数字 6（属主）：6 = 4 + 2 → 拥有读 (r)、写 (w) 权限，无执行 (x) 权限；
+
+    （2）第二位数字 4（属组）：4 = 4 → 仅拥有读 (r) 权限，无写、执行权限；
+
+    （3）第三位数字 0（其他用户）：0 → 无读、无写、无执行任何权限。
+
+    属主（所有者）：可读、可写，不可执行；
+
+    所属用户组：仅可读，不可写、不可执行；
+
+    其他用户：无任何访问权限。
+    </Jiexi>
+  </Workitem>
+  <Workitem tiankong>
+    <Wenben>
+    26. Linux 系统中单个进程最大文件描述符限制为1024个，服务器运行3个独立业务进程，假设每条网络连接占用1个文件描述符fd，请完成计算：
+
+    (1) 三台业务进程理论最大并发连接总数量为多少？
+
+    (2) 系统当前已占用1800个文件描述符，求剩余可用并发连接数量。
+    </Wenben>
+    <Ansinput />
+    <Jiexi>
+      (1) 总最大并发连接 = 单进程最大 fd × 进程数 = 1024 × 3 = 3072
+
+      (2) 剩余可用连接 = 总最大 fd - 已使用 fd = 3072 - 1800 = 1272
+    </Jiexi>
   </Workitem>
 </Workpaper>
 
@@ -1458,7 +1527,7 @@ Linux 操作系统课程期末复习。
     </Jiexi>
   </Workitem>
   <Workitem tiankong>
-    <Wenben>12. IP 配置正确，但无法通过域名访问网页，给出排查步骤。</Wenben>
+    <Wenben>12. Linux 主机 IP 地址、网关配置无误，能正常 ping 通外网 IP，但无法解析域名访问网页，请分析核心故障原因并写出完整排查步骤。</Wenben>
     <Ansinput />
     <Jiexi>
       原因：DNS 配置失效。
@@ -1553,13 +1622,14 @@ Linux 操作系统课程期末复习。
 <Workpaper>
 <Workpapersettings />
   <Workitem tiankong>
-    <Wenben>1. 编写脚本：自动创建 network 文件夹，并在其中创建空白文件 log.txt。</Wenben>
+    <Wenben>1. 编写脚本：实现 network 目录及内部 log.txt 文件生成。</Wenben>
     <Ansinput />
     <Jiexi>
     ```bash
     #!/bin/bash
-    mkdir network
+    mkdir -p network
     touch network/log.txt
+    echo "目录network与文件log.txt创建完成"
     ```
     </Jiexi>
   </Workitem>
@@ -1630,13 +1700,13 @@ Linux 操作系统课程期末复习。
     </Jiexi>
   </Workitem>
   <Workitem tiankong>
-    <Wenben>8. 定义变量 port="80"，终端输出"网页服务端口：80"。</Wenben>
+    <Wenben>8. 定义变量 port="80"，终端输出"网页服务监听端口：80"。</Wenben>
     <Ansinput />
     <Jiexi>
     ```bash
     #!/bin/bash
     port="80"
-    echo "网页服务端口：${port}"
+    echo "网页服务监听端口：${port}"
     ```
     </Jiexi>
   </Workitem>
@@ -1729,24 +1799,74 @@ Linux 操作系统课程期末复习。
     </Jiexi>
   </Workitem>
   <Workitem tiankong>
-    <Wenben>17. 定义变量 dns="114.114.114.114"，输出"备用 DNS 服务器：114.114.114.114"。</Wenben>
+    <Wenben>17. 定义变量 dns="114.114.114.114"，输出"公共 DNS 服务器：114.114.114.114"。</Wenben>
     <Ansinput />
     <Jiexi>
     ```bash
     #!/bin/bash
     dns="114.114.114.114"
-    echo "备用 DNS 服务器：${dns}"
+    echo "公共 DNS 服务器：${dns}"
     ```
     </Jiexi>
   </Workitem>
   <Workitem tiankong>
-    <Wenben>18. 脚本打印当前系统时间，并显示"时间获取完成"。</Wenben>
+    <Wenben>18. 脚本打印当前系统时间，并显示"时间获取完毕"。</Wenben>
     <Ansinput />
     <Jiexi>
     ```bash
     #!/bin/bash
     date
-    echo "时间获取完成"
+    echo "时间获取完毕"
+    ```
+    </Jiexi>
+  </Workitem>
+  <Workitem tiankong>
+    <Wenben>19. 编程实现 /home/test 目录存在性校验</Wenben>
+    <Ansinput />
+    <Jiexi>
+    ```bash
+    #!/bin/bash
+    if [ -d "/home/test" ];then
+      echo "目录 /home/test 已存在"
+    else
+      echo "目录 /home/test 不存在"
+    fi
+    ```
+    </Jiexi>
+  </Workitem>
+  <Workitem tiankong>
+    <Wenben>20. 编程实现 user10~user12 普通用户批量新建</Wenben>
+    <Ansinput />
+    <Jiexi>
+    ```bash
+    #!/bin/bash
+    for i in {10..12}
+    do
+      useradd -m user$i
+      echo "用户 user$i 创建完成"
+    done
+    ```
+    </Jiexi>
+  </Workitem>
+  <Workitem tiankong>
+    <Wenben>21. 判断目录 /usr/project 是否存在，若该目录不存在则自动创建此目录</Wenben>
+    <Ansinput />
+    <Jiexi>
+    ```bash
+    #!/bin/bash
+    if [ ! -d "/usr/project" ];then 
+      mkdir -p /usr/project 
+    fi
+    ```
+    </Jiexi>
+  </Workitem>
+  <Workitem tiankong>
+    <Wenben>22. 输出当前系统登录用户名</Wenben>
+    <Ansinput />
+    <Jiexi>
+    ```bash
+    #!/bin/bash
+    echo  $USER
     ```
     </Jiexi>
   </Workitem>
