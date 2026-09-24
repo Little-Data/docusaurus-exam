@@ -14,10 +14,10 @@ jobs:
     env:
       TZ: Asia/Shanghai
     steps:
-      - uses: actions/checkout@latest
+      - uses: actions/checkout@7
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@latest
+      - uses: actions/setup-node@7
         with:
           node-version: 24
           cache: yarn
@@ -28,7 +28,7 @@ jobs:
         run: yarn build
 
       - name: Upload Build Artifact
-        uses: actions/upload-pages-artifact@latest
+        uses: actions/upload-pages-artifact@5
         with:
           path: build
 
@@ -50,4 +50,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@latest
+        uses: actions/deploy-pages@5
